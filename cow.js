@@ -42,17 +42,16 @@ async function setup() {
 window.onload = setup;
 function colorCube()
 {
-    var vertices = [
-        vec3(2.292449,-0.871852,-0.882400),
-        vec3(2.410367,-0.777999,-0.841105),
-        vec3(2.407309,-0.974980,-0.805091),
-        vec3(2.520417,-0.954785,-0.739445),
-        vec3(2.514167,-1.077721,-0.706614),
-        vec3(2.669281,-0.930664,-0.557166),
-
-    ];
-    for ( var i = 0; i < vertices.length; ++i ) {
-        positions.push( vertices[i]);
+    var vertices = get_vertices()
+    var faces = get_faces()
+    console.log(vertices.length)
+    console.log(faces.length)
+    for ( var i = 0; i < 5693; ++i ) {
+        positions.push( vertices[faces[i][0]]);
+        colors.push([ 0.0, 0.0, 0.0, 1.0 ]);
+        positions.push( vertices[faces[i][1]]);
+        colors.push([ 0.0, 0.0, 0.0, 1.0 ]);
+        positions.push( vertices[faces[i][2]]);
         colors.push([ 0.0, 0.0, 0.0, 1.0 ]);
     }
 
@@ -134,7 +133,7 @@ function setUniformVariables() {
     gl.useProgram(prog);
     var transform_loc = gl.getUniformLocation(prog, "transform");
     var model = rotate(angle, [0.0, 1, 0.0]);
-    var eye = vec3(3, 3, 3);
+    var eye = vec3(0, 0, 10);
     var target = vec3(0, 0, 0);
     var up = vec3(0, 1, 0);
     var view = lookAt(
@@ -179,7 +178,7 @@ function render(timestamp) {
     updateAngle(timestamp)
     setUniformVariables();
     gl.bindVertexArray(vao);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, positions.length/3);
+    gl.drawArrays(gl.TRIANGLES, 0, positions.length/3);
     requestAnimationFrame(render);
 }
 
