@@ -13,6 +13,8 @@ var fs;
 var prog;
 var vao;
 var previousTimestamp;
+var translateX =0;
+var translateY =0;
 
 function initializeContext() {
     canvas = document.getElementById("myCanvas");
@@ -104,6 +106,7 @@ function setUniformVariables() {
     gl.useProgram(prog);
     var transform_loc = gl.getUniformLocation(prog, "transform");
     var model = rotate(angle, [0.0, 1, 0.0]);
+    var t = translate( translateX, translateY, 0 )
     var eye = vec3(0, 0, 30);
     var target = vec3(0, 0, 0);
     var up = vec3(0, 1, 0);
@@ -114,7 +117,7 @@ function setUniformVariables() {
     );
     var aspect = canvas.width / canvas.height;
     var projection = perspective(30.0, aspect, 0.1, 10000.0);
-    var transform = mult(projection, mult(view, model));
+    var transform = mult(projection, mult(view, mult(model,t)));
     gl.uniformMatrix4fv(transform_loc, false, flatten(transform));
 }
 
@@ -142,6 +145,11 @@ function updateAngle(timestamp) {
     angularSpeed = Math.max(angularSpeed - 100.0*delta, 0.0);
     previousTimestamp = timestamp;
 }
+function updatePosition(timestamp) {
+  if (previousTimestamp === undefined) {
+    previousTimestamp = timestamp;
+  }
+}
 
 function render(timestamp) {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -154,7 +162,11 @@ function render(timestamp) {
 }
 
 function setEventListeners(canvas) {
-    canvas.addEventListener('click', function (event) {
-        angularSpeed += 50;
+    canvas.addEventListener('mousemove', function (event) {
+        if(event.which == 1){
+          console.log(event.movementX)
+          translateX = translateX +(event.movementX)/100
+          translateY = translateY- (event.movementY)/80
+        }
     })
 }
