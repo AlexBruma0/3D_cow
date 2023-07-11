@@ -50,11 +50,11 @@ const colorCube = async() =>{
     console.log(faces.length)
     console.log(faces[5692])
     for ( var i = 0; i < faces.length ; i++ ) {
-        positions.push( vertices[faces[i][0]]);
+        positions.push( vertices[faces[i][0] -1 ]);
         colors.push([ 0.0, 0.0, 0.0, 1.0 ]);
-        positions.push( vertices[faces[i][1]]);
+        positions.push( vertices[faces[i][1] -1 ]);
         colors.push([ 0.0, 0.0, 0.0, 1.0 ]);
-        positions.push( vertices[faces[i][2]]);
+        positions.push( vertices[faces[i][2] -1 ]);
         colors.push([ 0.0, 0.0, 0.0, 1.0 ]);
     }
 
