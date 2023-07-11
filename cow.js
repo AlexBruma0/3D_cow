@@ -21,7 +21,7 @@ function initializeContext() {
     canvas.width = pixelRatio * canvas.clientWidth;
     canvas.height = pixelRatio * canvas.clientHeight;
     gl.viewport(0, 0, canvas.width, canvas.height);
-    gl.clearColor(1, 1, 1, 0);
+    gl.clearColor(0.5, 0.5, 0.5, 1);
     gl.lineWidth(1.0);
     gl.enable(gl.DEPTH_TEST);
 }
@@ -40,13 +40,13 @@ async function setup() {
 };
 
 window.onload = setup;
-function colorCube()
-{
-    var vertices = get_vertices()
+const colorCube = async() =>{
     var faces = get_faces()
+    var vertices = get_vertices()
     console.log(vertices.length)
     console.log(faces.length)
-    for ( var i = 0; i < 5693; ++i ) {
+    console.log(faces[5692])
+    for ( var i = 0; i < faces.length ; i++ ) {
         positions.push( vertices[faces[i][0]]);
         colors.push([ 0.0, 0.0, 0.0, 1.0 ]);
         positions.push( vertices[faces[i][1]]);
@@ -59,35 +59,6 @@ function colorCube()
     colors = flatten(colors);
 }
 
-function quad(a, b, c, d)
-{
-    var vertices = [
-        vec3( -0.5, -0.5,  0.5),
-        vec3( -0.5,  0.5,  0.5),
-        vec3(  0.5,  0.5,  0.5),
-        vec3(  0.5, -0.5,  0.5),
-        vec3( -0.5, -0.5, -0.5),
-        vec3( -0.5,  0.5, -0.5),
-        vec3(  0.5,  0.5, -0.5),
-        vec3(  0.5, -0.5, -0.5)
-    ];
-
-    var vertexColors = [
-        [ 0.0, 0.0, 0.0, 1.0 ],  // black
-        [ 1.0, 0.0, 0.0, 1.0 ],  // red
-        [ 0.0, 0.0, 0.0, 1.0 ],  // black
-        [ 0.0, 0.0, 0.0, 1.0 ],  // black
-        [ 1.0, 0.0, 0.0, 1.0 ],  // red
-        [ 0.0, 0.0, 0.0, 1.0 ],  // black
-        [ 1.0, 0.0, 0.0, 1.0 ],  // red
-        [ 0.0, 0.0, 0.0, 1.0 ],  // black
-    ];
-    var indices = [ a, b, c, a, c, d ];
-    for ( var i = 0; i < indices.length; ++i ) {
-        positions.push( vertices[indices[i]] );
-        colors.push(vertexColors[indices[i]]);
-    }
-}
 function createBuffers() {
     position_buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, position_buffer);
@@ -133,7 +104,7 @@ function setUniformVariables() {
     gl.useProgram(prog);
     var transform_loc = gl.getUniformLocation(prog, "transform");
     var model = rotate(angle, [0.0, 1, 0.0]);
-    var eye = vec3(0, 0, 10);
+    var eye = vec3(0, 0, 30);
     var target = vec3(0, 0, 0);
     var up = vec3(0, 1, 0);
     var view = lookAt(
@@ -142,7 +113,7 @@ function setUniformVariables() {
         up
     );
     var aspect = canvas.width / canvas.height;
-    var projection = perspective(90.0, aspect, 0.1, 1000.0);
+    var projection = perspective(30.0, aspect, 0.1, 10000.0);
     var transform = mult(projection, mult(view, model));
     gl.uniformMatrix4fv(transform_loc, false, flatten(transform));
 }
