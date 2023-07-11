@@ -1,6 +1,7 @@
 var gl
 var canvas;
-var angle;
+var angleX= 0 ;
+var angleY=0;
 var angularSpeed;
 var positions = [];
 var colors = [];
@@ -37,7 +38,6 @@ async function setup() {
     await loadShaders();
     compileShaders();
     createVertexArrayObjects();
-    angle = 0.0;
     angularSpeed = 0.0;
     requestAnimationFrame(render)
 };
@@ -106,7 +106,8 @@ function compileShaders() {
 function setUniformVariables() {
     gl.useProgram(prog);
     var transform_loc = gl.getUniformLocation(prog, "transform");
-    var model = rotate(angle, [0.0, 1, 0.0]);
+    var model = rotate(angleX, [0.0, 1, 0.0]);
+    var modelY = rotate(angleY, [1.0, 0, 0.0]);
     var t = translate( translateX, translateY, translateZ )
     var eye = vec3(0, 0, 30);
     var target = vec3(0, 0, 0);
@@ -118,7 +119,7 @@ function setUniformVariables() {
     );
     var aspect = canvas.width / canvas.height;
     var projection = perspective(30.0, aspect, 0.1, 10000.0);
-    var transform = mult(projection, mult(view, mult(model,t)));
+    var transform = mult(projection, mult(view, mult(mult(model,modelY),t)));
     gl.uniformMatrix4fv(transform_loc, false, flatten(transform));
 }
 
@@ -141,8 +142,8 @@ function updateAngle(timestamp) {
         previousTimestamp = timestamp;
     }
     var delta = (timestamp - previousTimestamp) / 1000;
-    angle += angularSpeed*delta;
-    angle -= Math.floor(angle/360.0)*360.0;
+    angleX += angularSpeed*delta;
+    angleX -= Math.floor(angleX/360.0)*360.0;
     angularSpeed = Math.max(angularSpeed - 100.0*delta, 0.0);
     previousTimestamp = timestamp;
 }
@@ -161,7 +162,7 @@ function render(timestamp) {
     gl.drawArrays(gl.TRIANGLES, 0, positions.length/3);
     requestAnimationFrame(render);
 }
-
+document.addEventListener('contextmenu', event => event.preventDefault());
 function setEventListeners(canvas) {
     canvas.addEventListener('mousemove', function (event) {
         if(event.which == 1){
@@ -169,8 +170,13 @@ function setEventListeners(canvas) {
           translateX = translateX +(event.movementX)/100
           translateY = translateY- (event.movementY)/80
         }
+        if(event.which == 3) {
+          angleX = angleX +(event.movementX)/2
+          angleY = angleY + (event.movementY)/2
+        }
     })
     canvas.addEventListener('wheel', function (event) {
       translateZ = translateZ - event.deltaY/10
     })
+
 }
