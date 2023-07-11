@@ -15,6 +15,7 @@ var vao;
 var previousTimestamp;
 var translateX =0;
 var translateY =0;
+var translateZ = 0
 
 function initializeContext() {
     canvas = document.getElementById("myCanvas");
@@ -106,7 +107,7 @@ function setUniformVariables() {
     gl.useProgram(prog);
     var transform_loc = gl.getUniformLocation(prog, "transform");
     var model = rotate(angle, [0.0, 1, 0.0]);
-    var t = translate( translateX, translateY, 0 )
+    var t = translate( translateX, translateY, translateZ )
     var eye = vec3(0, 0, 30);
     var target = vec3(0, 0, 0);
     var up = vec3(0, 1, 0);
@@ -168,5 +169,8 @@ function setEventListeners(canvas) {
           translateX = translateX +(event.movementX)/100
           translateY = translateY- (event.movementY)/80
         }
+    })
+    canvas.addEventListener('wheel', function (event) {
+      translateZ = translateZ - event.deltaY/10
     })
 }
