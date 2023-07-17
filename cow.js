@@ -37,8 +37,9 @@ function initializeContext() {
 async function setup() {
     initializeContext();
     setEventListeners(canvas);
-    colorCube();
     setNormals()
+
+    colorCube();
     createBuffers();
     await loadShaders();
     compileShaders();
@@ -83,17 +84,25 @@ function setNormals() {
         var c = cross(u,v)
         normals.push(c)
     }
-    normals = flatten(normals)
+    console.log(normals)
 }
 
 const colorCube = async() =>{
+    const color = vec3(0,0.5,0)
+
     for ( var i = 0; i < faces.length ; i++ ) {
+        var newColor = []
+        var dot_product = dot(color, normalize(normals[i]) )
+        for(var j = 0; j <3; j++){
+            newColor[j] = Math.abs(color[j] * dot_product)
+        }
+
         positions.push( vertices[faces[i][0] -1 ]);
-        colors.push([ 0.0, 0.0, 0.0, 1.0 ]);
+        colors.push([ newColor[0], newColor[1], newColor[2], 1.0 ]);
         positions.push( vertices[faces[i][1] -1 ]);
-        colors.push([ 0.0, 0.0, 0.0, 1.0 ]);
+        colors.push([ newColor[0], newColor[1], newColor[2], 1.0 ]);
         positions.push( vertices[faces[i][2] -1 ]);
-        colors.push([ 0.0, 0.0, 0.0, 1.0 ]);
+        colors.push([ newColor[0], newColor[1], newColor[2], 1.0 ]);
     }
     positions = flatten(positions);
     colors = flatten(colors);
