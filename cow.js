@@ -97,8 +97,10 @@ const colorCube = () =>{
     for ( var i = 0; i < faces.length ; i++ ) {
         var newColor = []
         var dot_product = dot(point_light_normal, normalize(normals[i]) )
-        cow_color.forEach((c,j) => {newColor[j] = Math.abs(cow_color[j] * dot_product)})
-        
+        cow_color.forEach((c,j) => {
+
+            newColor[j] = cow_color[j] * dot_product * -1})
+
         positions.push( vertices[faces[i][0] -1 ]);
         colors.push([ newColor[0], newColor[1], newColor[2], 1.0 ]);
         positions.push( vertices[faces[i][1] -1 ]);
