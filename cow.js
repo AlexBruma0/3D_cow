@@ -6,8 +6,8 @@ var angularSpeed;
 var positions = [];
 var colors = [];
 var normals = []
-var faces
-var vertices
+var faces = get_faces();
+var vertices = get_vertices();
 var position_buffer;
 var color_buffer;
 var vs_source;
@@ -45,51 +45,6 @@ async function setup() {
     angularSpeed = 0.0;
     requestAnimationFrame(render)
 };
-
-window.onload = setup;
-const colorCube = async() =>{
-    faces = get_faces()
-    vertices = get_vertices()
-    console.log(vertices.length)
-    console.log(faces.length)
-    console.log(faces[5692])
-    for ( var i = 0; i < faces.length ; i++ ) {
-        positions.push( vertices[faces[i][0] -1 ]);
-        colors.push([ 0.0, 0.0, 0.0, 1.0 ]);
-        positions.push( vertices[faces[i][1] -1 ]);
-        colors.push([ 0.0, 0.0, 0.0, 1.0 ]);
-        positions.push( vertices[faces[i][2] -1 ]);
-        colors.push([ 0.0, 0.0, 0.0, 1.0 ]);
-    }
-
-    positions = flatten(positions);
-    colors = flatten(colors);
-}
-
-function createBuffers() {
-    position_buffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, position_buffer);
-    gl.bufferData(gl.ARRAY_BUFFER,
-        new Float32Array(positions),
-        gl.STATIC_DRAW);
-    color_buffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
-    gl.bufferData(gl.ARRAY_BUFFER,
-        new Float32Array(colors),
-        gl.STATIC_DRAW);
-}
-
-function setNormals() {
-    for ( var i = 0; i < faces.length ; i++ ) {
-        var u = subtract(vertices[faces[i][0] -1 ] , vertices[faces[i][1] -1 ])
-        var v = subtract(vertices[faces[i][0] -1 ] , vertices[faces[i][2] -1 ])
-        var c = cross(u,v)
-        normals.push(c)
-    }
-    normals = flatten(normals)
-    console.log(normals)
-}
-
 function loadShaderFile(url) {
     return fetch(url).then(response => response.text());
 }
@@ -116,6 +71,44 @@ function compileShaders() {
     gl.attachShader(prog, fs);
     gl.linkProgram(prog);
 
+}
+
+window.onload = setup;
+
+function setNormals() {
+    for ( var i = 0; i < faces.length ; i++ ) {
+        var u = subtract(vertices[faces[i][0] -1 ] , vertices[faces[i][1] -1 ])
+        var v = subtract(vertices[faces[i][0] -1 ] , vertices[faces[i][2] -1 ])
+        var c = cross(u,v)
+        normals.push(c)
+    }
+    normals = flatten(normals)
+}
+
+const colorCube = async() =>{
+    for ( var i = 0; i < faces.length ; i++ ) {
+        positions.push( vertices[faces[i][0] -1 ]);
+        colors.push([ 0.0, 0.0, 0.0, 1.0 ]);
+        positions.push( vertices[faces[i][1] -1 ]);
+        colors.push([ 0.0, 0.0, 0.0, 1.0 ]);
+        positions.push( vertices[faces[i][2] -1 ]);
+        colors.push([ 0.0, 0.0, 0.0, 1.0 ]);
+    }
+    positions = flatten(positions);
+    colors = flatten(colors);
+}
+
+function createBuffers() {
+    position_buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, position_buffer);
+    gl.bufferData(gl.ARRAY_BUFFER,
+        new Float32Array(positions),
+        gl.STATIC_DRAW);
+    color_buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
+    gl.bufferData(gl.ARRAY_BUFFER,
+        new Float32Array(colors),
+        gl.STATIC_DRAW);
 }
 
 function setUniformVariables() {
