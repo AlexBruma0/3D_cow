@@ -21,6 +21,11 @@ var previousTimestamp;
 var translateX =0;
 var translateY =0;
 var translateZ = 0
+var point_light = vec3(8,5,5);
+var target = vec3(0, 0, 0);
+var point_light_normal = normalize(subtract(target,point_light))
+const cow_color = vec3(0.9,0.5,0.2)
+
 
 function initializeContext() {
     canvas = document.getElementById("myCanvas");
@@ -87,21 +92,13 @@ function setNormals() {
     console.log(normals)
 }
 
-const colorCube = async() =>{
-    const color = vec3(0.9,0.5,0.2)
-
-    var eye = vec3(8,5,5);
-    var target = vec3(0, 0, 0);
-    var point_light_normal = normalize(subtract(target,eye))
-    console.log(point_light_normal)
+const colorCube = () =>{
 
     for ( var i = 0; i < faces.length ; i++ ) {
         var newColor = []
         var dot_product = dot(point_light_normal, normalize(normals[i]) )
-        for(var j = 0; j <3; j++){
-            newColor[j] = Math.abs(color[j] * dot_product)
-        }
-
+        cow_color.forEach((c,j) => {newColor[j] = Math.abs(cow_color[j] * dot_product)})
+        
         positions.push( vertices[faces[i][0] -1 ]);
         colors.push([ newColor[0], newColor[1], newColor[2], 1.0 ]);
         positions.push( vertices[faces[i][1] -1 ]);
