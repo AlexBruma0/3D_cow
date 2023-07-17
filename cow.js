@@ -10,6 +10,7 @@ var faces = get_faces();
 var vertices = get_vertices();
 var position_buffer;
 var color_buffer;
+var normal_buffer;
 var vs_source;
 var fs_source;
 var vs;
@@ -104,10 +105,17 @@ function createBuffers() {
     gl.bufferData(gl.ARRAY_BUFFER,
         new Float32Array(positions),
         gl.STATIC_DRAW);
+    
     color_buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
     gl.bufferData(gl.ARRAY_BUFFER,
         new Float32Array(colors),
+        gl.STATIC_DRAW);
+    
+    normal_buffer = gl.createBuffer()
+    gl.bindBuffer(gl.ARRAY_BUFFER, normal_buffer);
+    gl.bufferData(gl.ARRAY_BUFFER,
+        new Float32Array(normals),
         gl.STATIC_DRAW);
 }
 
@@ -138,11 +146,15 @@ function createVertexArrayObjects() {
     gl.bindBuffer(gl.ARRAY_BUFFER, position_buffer);
     gl.vertexAttribPointer(pos_idx, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(pos_idx);
+
     var col_idx = gl.getAttribLocation(prog, "color");
     gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
     gl.vertexAttribPointer(col_idx, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(col_idx);
     gl.bindVertexArray(null);
+
+    var normalLocation = gl.getAttribLocation(prog, "normal")
+
 }
 
 function updateAngle(timestamp) {
