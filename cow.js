@@ -88,7 +88,7 @@ function setNormals() {
 }
 
 const colorCube = async() =>{
-    const color = vec3(0,0.5,0)
+    const color = vec3(0.9,0.5,0.2)
 
     for ( var i = 0; i < faces.length ; i++ ) {
         var newColor = []
