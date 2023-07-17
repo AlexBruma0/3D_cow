@@ -5,6 +5,9 @@ var angleY=0;
 var angularSpeed;
 var positions = [];
 var colors = [];
+var normals = []
+var faces
+var vertices
 var position_buffer;
 var color_buffer;
 var vs_source;
@@ -34,6 +37,7 @@ async function setup() {
     initializeContext();
     setEventListeners(canvas);
     colorCube();
+    setNormals()
     createBuffers();
     await loadShaders();
     compileShaders();
@@ -44,8 +48,8 @@ async function setup() {
 
 window.onload = setup;
 const colorCube = async() =>{
-    var faces = get_faces()
-    var vertices = get_vertices()
+    faces = get_faces()
+    vertices = get_vertices()
     console.log(vertices.length)
     console.log(faces.length)
     console.log(faces[5692])
@@ -83,6 +87,7 @@ function setNormals() {
         normals.push(c)
     }
     normals = flatten(normals)
+    console.log(normals)
 }
 
 function loadShaderFile(url) {
