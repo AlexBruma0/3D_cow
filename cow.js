@@ -29,7 +29,7 @@ function initializeContext() {
     canvas.width = pixelRatio * canvas.clientWidth;
     canvas.height = pixelRatio * canvas.clientHeight;
     gl.viewport(0, 0, canvas.width, canvas.height);
-    gl.clearColor(0.5, 0.5, 0.5, 1);
+    gl.clearColor(0, 0.5, 0.5, 1);
     gl.lineWidth(1.0);
     gl.enable(gl.DEPTH_TEST);
 }
@@ -90,9 +90,14 @@ function setNormals() {
 const colorCube = async() =>{
     const color = vec3(0.9,0.5,0.2)
 
+    var eye = vec3(8,5,5);
+    var target = vec3(0, 0, 0);
+    var point_light_normal = normalize(subtract(target,eye))
+    console.log(point_light_normal)
+
     for ( var i = 0; i < faces.length ; i++ ) {
         var newColor = []
-        var dot_product = dot(color, normalize(normals[i]) )
+        var dot_product = dot(point_light_normal, normalize(normals[i]) )
         for(var j = 0; j <3; j++){
             newColor[j] = Math.abs(color[j] * dot_product)
         }
