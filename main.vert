@@ -30,6 +30,6 @@ void main() {
     gl_Position = transform*vec4(position, 1.0f);
 
     // Write the color to the output defined earlier.
-    vertexColor = color_transform*color;
+    vertexColor = color;
 
 }

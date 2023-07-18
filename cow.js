@@ -36,7 +36,7 @@ function initializeContext() {
     canvas.width = pixelRatio * canvas.clientWidth;
     canvas.height = pixelRatio * canvas.clientHeight;
     gl.viewport(0, 0, canvas.width, canvas.height);
-    gl.clearColor(0, 0.5, 0.5, 1);
+    gl.clearColor(0, 0.0, 0.0, 1);
     gl.lineWidth(1.0);
     gl.enable(gl.DEPTH_TEST);
 }
@@ -152,17 +152,12 @@ function setUniformVariables() {
     gl.uniformMatrix4fv(transform_loc, false, flatten(transform));
 }
 function setColorTransformation() {
-    gl.useProgram(prog);
-    var transform_loc = gl.getUniformLocation(prog, "color_transform");
-    // var model = rotate(0, [0.0, 1, 0.0]);
-    // var aspect = canvas.width / canvas.height;
-    // var projection = perspective(30.0, aspect, 0.1, 10000.0);
-    // var transform = mult(projection, model);
-    var tr = mat4()
-    console.log(tr)
-    tr[0][0] = point_light[0]
-    tr[2][2] = point_light[2]
-    gl.uniformMatrix4fv(transform_loc, false, flatten(tr));
+    // gl.useProgram(prog);
+    // var transform_loc = gl.getUniformLocation(prog, "color_transform");
+    // var tr = mat4()
+    // tr[0] = rot[0]
+    // tr[2][2] = point_light[2]
+    // gl.uniformMatrix4fv(transform_loc, false, flatten(tr));
 }
 
 function createVertexArrayObjects() {
@@ -196,20 +191,31 @@ function rotateLight() {
     setInterval(() =>{
         point_light[0] = dot(vec4(point_light,0),rot[0] )
         point_light[2] = dot(vec4(point_light,0),rot[2] )
-        console.log(point_light)
-        // point_light_normal = normalize(subtract(target,point_light))
-        // colors = []
-        // for ( var i = 0; i < faces.length ; i++ ) {
-        //     var newColor = []
-        //     var dot_product = dot(point_light_normal, normalize(normals[i]) )
-        //     cow_color.forEach((c,j) => {newColor[j] = cow_color[j] * dot_product * -1})
-        //     colors.push([ newColor[0], newColor[1], newColor[2], 1.0 ]);
-        //     colors.push([ newColor[0], newColor[1], newColor[2], 1.0 ]);
-        //     colors.push([ newColor[0], newColor[1], newColor[2], 1.0 ]);
-        // } 
-        // flatten(colors)   
+        point_light_normal = normalize(subtract(target,point_light))
+        colors = []
+        for ( var i = 0; i < faces.length ; i++ ) {
+            var newColor = []
+            var dot_product = dot(point_light_normal, normalize(normals[i]) )
+            cow_color.forEach((c,j) => {newColor[j] = cow_color[j] * dot_product * -1})
+            colors.push([ newColor[0], newColor[1], newColor[2], 1.0 ]);
+            colors.push([ newColor[0], newColor[1], newColor[2], 1.0 ]);
+            colors.push([ newColor[0], newColor[1], newColor[2], 1.0 ]);
+        } 
+        flatten(colors)
+        
+        gl.useProgram(prog)
+        color_buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
+        gl.bufferData(gl.ARRAY_BUFFER,
+            flatten(colors),
+            gl.STATIC_DRAW);
+        var col_idx = gl.getAttribLocation(prog, "color");
+        gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
+        gl.vertexAttribPointer(col_idx, 4, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(col_idx);
+        gl.bindVertexArray(null);
 
-    },10)
+    },70)
 }
 
 function render(timestamp) {
@@ -226,7 +232,6 @@ document.addEventListener('contextmenu', event => event.preventDefault());
 function setEventListeners(canvas) {
     canvas.addEventListener('mousemove', function (event) {
         if(event.which == 1){
-          console.log(event.movementX)
           translateX = translateX +(event.movementX)/100
           translateY = translateY- (event.movementY)/80
         }
