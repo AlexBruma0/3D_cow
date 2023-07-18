@@ -2,6 +2,7 @@ var gl
 var canvas;
 var angleX= 0 ;
 var angleY=0;
+var point_light_angle = 0;
 var angularSpeed;
 var positions = [];
 var colors = [];
@@ -25,6 +26,7 @@ var point_light = vec3(8,5,5);
 var target = vec3(0, 0, 0);
 var point_light_normal = normalize(subtract(target,point_light))
 const cow_color = vec3(0.9,0.5,0.2)
+const rot = rotate(5, [0.0, 1, 0.0]);
 
 
 function initializeContext() {
@@ -50,6 +52,7 @@ async function setup() {
     compileShaders();
     createVertexArrayObjects();
     angularSpeed = 0.0;
+    rotateLight()
     requestAnimationFrame(render)
 };
 function loadShaderFile(url) {
@@ -89,7 +92,6 @@ function setNormals() {
         var c = cross(u,v)
         normals.push(c)
     }
-    console.log(normals)
 }
 
 const colorCube = () =>{
@@ -97,9 +99,7 @@ const colorCube = () =>{
     for ( var i = 0; i < faces.length ; i++ ) {
         var newColor = []
         var dot_product = dot(point_light_normal, normalize(normals[i]) )
-        cow_color.forEach((c,j) => {
-
-            newColor[j] = cow_color[j] * dot_product * -1})
+        cow_color.forEach((c,j) => {newColor[j] = cow_color[j] * dot_product * -1})
 
         positions.push( vertices[faces[i][0] -1 ]);
         colors.push([ newColor[0], newColor[1], newColor[2], 1.0 ]);
@@ -151,6 +151,19 @@ function setUniformVariables() {
     var transform = mult(projection, mult(view, mult(mult(model,modelY),t)));
     gl.uniformMatrix4fv(transform_loc, false, flatten(transform));
 }
+function setColorTransformation() {
+    gl.useProgram(prog);
+    var transform_loc = gl.getUniformLocation(prog, "color_transform");
+    // var model = rotate(0, [0.0, 1, 0.0]);
+    // var aspect = canvas.width / canvas.height;
+    // var projection = perspective(30.0, aspect, 0.1, 10000.0);
+    // var transform = mult(projection, model);
+    var tr = mat4()
+    console.log(tr)
+    tr[0][0] = point_light[0]
+    tr[2][2] = point_light[2]
+    gl.uniformMatrix4fv(transform_loc, false, flatten(tr));
+}
 
 function createVertexArrayObjects() {
     vao = gl.createVertexArray();
@@ -166,8 +179,6 @@ function createVertexArrayObjects() {
     gl.enableVertexAttribArray(col_idx);
     gl.bindVertexArray(null);
 
-    var normalLocation = gl.getAttribLocation(prog, "normal")
-
 }
 
 function updateAngle(timestamp) {
@@ -180,10 +191,25 @@ function updateAngle(timestamp) {
     angularSpeed = Math.max(angularSpeed - 100.0*delta, 0.0);
     previousTimestamp = timestamp;
 }
-function updatePosition(timestamp) {
-  if (previousTimestamp === undefined) {
-    previousTimestamp = timestamp;
-  }
+function rotateLight() {
+    
+    setInterval(() =>{
+        point_light[0] = dot(vec4(point_light,0),rot[0] )
+        point_light[2] = dot(vec4(point_light,0),rot[2] )
+        console.log(point_light)
+        // point_light_normal = normalize(subtract(target,point_light))
+        // colors = []
+        // for ( var i = 0; i < faces.length ; i++ ) {
+        //     var newColor = []
+        //     var dot_product = dot(point_light_normal, normalize(normals[i]) )
+        //     cow_color.forEach((c,j) => {newColor[j] = cow_color[j] * dot_product * -1})
+        //     colors.push([ newColor[0], newColor[1], newColor[2], 1.0 ]);
+        //     colors.push([ newColor[0], newColor[1], newColor[2], 1.0 ]);
+        //     colors.push([ newColor[0], newColor[1], newColor[2], 1.0 ]);
+        // } 
+        // flatten(colors)   
+
+    },10)
 }
 
 function render(timestamp) {
@@ -191,6 +217,7 @@ function render(timestamp) {
     gl.useProgram(prog);
     updateAngle(timestamp)
     setUniformVariables();
+    setColorTransformation()
     gl.bindVertexArray(vao);
     gl.drawArrays(gl.TRIANGLES, 0, positions.length/3);
     requestAnimationFrame(render);

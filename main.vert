@@ -19,6 +19,8 @@ out vec4 vertexColor;
 // transformation matrix.
 uniform mat4 transform;
 
+uniform mat4 color_transform;
+
 // Per-vertex transformations 
 // should be computed in the vertex shader.
 void main() {
@@ -28,6 +30,6 @@ void main() {
     gl_Position = transform*vec4(position, 1.0f);
 
     // Write the color to the output defined earlier.
-    vertexColor = color;
+    vertexColor = color_transform*color;
 
 }
