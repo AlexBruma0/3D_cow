@@ -36,7 +36,7 @@ function initializeContext() {
     canvas.width = pixelRatio * canvas.clientWidth;
     canvas.height = pixelRatio * canvas.clientHeight;
     gl.viewport(0, 0, canvas.width, canvas.height);
-    gl.clearColor(0, 0.0, 0.0, 1);
+    gl.clearColor(0, 0.1, 0.0, 1);
     gl.lineWidth(1.0);
     gl.enable(gl.DEPTH_TEST);
 }
@@ -124,12 +124,6 @@ function createBuffers() {
     gl.bufferData(gl.ARRAY_BUFFER,
         new Float32Array(colors),
         gl.STATIC_DRAW);
-    
-    normal_buffer = gl.createBuffer()
-    gl.bindBuffer(gl.ARRAY_BUFFER, normal_buffer);
-    gl.bufferData(gl.ARRAY_BUFFER,
-        new Float32Array(normals),
-        gl.STATIC_DRAW);
 }
 
 function setUniformVariables() {
@@ -150,14 +144,6 @@ function setUniformVariables() {
     var projection = perspective(30.0, aspect, 0.1, 10000.0);
     var transform = mult(projection, mult(view, mult(mult(model,modelY),t)));
     gl.uniformMatrix4fv(transform_loc, false, flatten(transform));
-}
-function setColorTransformation() {
-    // gl.useProgram(prog);
-    // var transform_loc = gl.getUniformLocation(prog, "color_transform");
-    // var tr = mat4()
-    // tr[0] = rot[0]
-    // tr[2][2] = point_light[2]
-    // gl.uniformMatrix4fv(transform_loc, false, flatten(tr));
 }
 
 function createVertexArrayObjects() {
@@ -202,8 +188,6 @@ function rotateLight() {
             colors.push([ newColor[0], newColor[1], newColor[2], 1.0 ]);
         } 
         flatten(colors)
-        
-        gl.useProgram(prog)
         color_buffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
         gl.bufferData(gl.ARRAY_BUFFER,
@@ -223,7 +207,6 @@ function render(timestamp) {
     gl.useProgram(prog);
     updateAngle(timestamp)
     setUniformVariables();
-    setColorTransformation()
     gl.bindVertexArray(vao);
     gl.drawArrays(gl.TRIANGLES, 0, positions.length/3);
     requestAnimationFrame(render);

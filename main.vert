@@ -6,8 +6,6 @@
 in vec3 position;
 in vec4 color;
 
-//new
-//in vec3 normal
 
 // Define the outputs. Since the output for the vertex
 // position is a built-in variable, we just need to define
