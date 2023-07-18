@@ -45,7 +45,6 @@ async function setup() {
     initializeContext();
     setEventListeners(canvas);
     setNormals()
-
     colorCube();
     createBuffers();
     await loadShaders();
@@ -61,8 +60,8 @@ function loadShaderFile(url) {
 
 async function loadShaders() {
     const shaderURLs = [
-        './main.vert',
-        './main.frag'
+        './shaders/main.vert',
+        './shaders/main.frag'
     ];
     const shader_files = await Promise.all(shaderURLs.map(loadShaderFile));
     vs_source = shader_files[0];
