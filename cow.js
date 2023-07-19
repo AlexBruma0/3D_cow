@@ -249,7 +249,13 @@ function rotateLight() {
         point_light[0] = dot(vec4(point_light,0),rot[0] )
         point_light[2] = dot(vec4(point_light,0),rot[2] )
 
-        cube_angle +=10
+        if(Math.abs(dot(point_light,vec3(8,5,5))) < 0.1 ){
+            console.log('hi')
+            point_light= vec3(8,5,5)
+        }
+
+
+        cube_angle +=6
         point_light_normal = normalize(subtract(target,point_light))
         colors = []
         for ( var i = 0; i < faces.length ; i++ ) {
