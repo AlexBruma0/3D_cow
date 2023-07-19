@@ -112,7 +112,7 @@ const colorCube = () =>{
     colors = flatten(colors);
 
     positions2 = [
-        [-9,-3,-3],
+        [-3,-3,-3],
         [-2,8,1],
         [5,5,5]
     ]
@@ -232,11 +232,15 @@ function render(timestamp) {
     gl.useProgram(prog);
     updateAngle(timestamp)
     setUniformVariables();
-    gl.bindVertexArray(vao);
-    gl.drawArrays(gl.TRIANGLES, 0, positions.length/3);
+
 
     gl.bindVertexArray(vao2);
     gl.drawArrays(gl.TRIANGLES, 0, positions2.length/3);
+    
+    gl.bindVertexArray(vao);
+    gl.drawArrays(gl.TRIANGLES, 0, positions.length/3);
+
+
 
     requestAnimationFrame(render);
 }
