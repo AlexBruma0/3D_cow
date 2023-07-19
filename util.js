@@ -21,3 +21,14 @@ const create_program = (gl,vs,fs) => {
     gl.linkProgram(prog);
     return prog
 }
+
+function setNormals(faces,vertices) {
+    var normals = []
+    for ( var i = 0; i < faces.length ; i++ ) {
+        var u = subtract(vertices[faces[i][0] -1 ] , vertices[faces[i][1] -1 ])
+        var v = subtract(vertices[faces[i][0] -1 ] , vertices[faces[i][2] -1 ])
+        var c = cross(u,v)
+        normals.push(c)
+    }
+    return normals
+}

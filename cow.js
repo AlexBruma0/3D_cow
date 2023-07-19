@@ -39,7 +39,7 @@ window.onload = async function setup() {
     }
     initializeContext();
     setEventListeners(canvas);
-    setNormals()
+    normals = setNormals(faces,vertices)
     set_positions();
     createBuffers();
     await loadShaders();
@@ -87,15 +87,6 @@ function compileShaders() {
     prog2 = create_program(gl,vs2,fs)
 }
 
-function setNormals() {
-    for ( var i = 0; i < faces.length ; i++ ) {
-        var u = subtract(vertices[faces[i][0] -1 ] , vertices[faces[i][1] -1 ])
-        var v = subtract(vertices[faces[i][0] -1 ] , vertices[faces[i][2] -1 ])
-        var c = cross(u,v)
-        normals.push(c)
-    }
-    return normals
-}
 
 const set_positions = () =>{
     [positions,colors] = cow(point_light_normal,normals, cow_color, vertices)
@@ -123,15 +114,13 @@ function setUniformVariables() {
     );
     var aspect = canvas.width / canvas.height;
     var projection = perspective(30.0, aspect, 0.1, 10000.0);
-
+    //for cube 
     gl.useProgram(prog2);
     var transform_loc2 = gl.getUniformLocation(prog2, "transform2");
     var model2 = rotate(cube_angle, [0.0, 1, 0.0]);
     var transform2 = mult(projection, mult(view, model2));
-    console.log(dot(transform2[0],[8,5,5,1]),5,dot(transform2[2],[8,5,5,1]))
-
     gl.uniformMatrix4fv(transform_loc2, false, flatten(transform2));
-
+    //for cow
     gl.useProgram(prog);
     var transform_loc = gl.getUniformLocation(prog, "transform");
     var model = rotate(angleX, [0.0, 1, 0.0]);
