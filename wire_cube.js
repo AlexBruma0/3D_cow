@@ -20,6 +20,20 @@ const cow = (point_light_normal,normals, cow_color,vertices) => {
     return [positions,colors]
 }
 
+
+const compile_shaders_wfc = (gl, vs_source2, fs) =>{
+    var vs2 = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vs2, vs_source2); 
+    gl.compileShader(vs2);
+
+    var prog2 = gl.createProgram()
+    gl.attachShader(prog2,vs2)
+    gl.attachShader(prog2,fs)
+    gl.linkProgram(prog2)
+
+    return [vs2,prog2]
+}
+
 const wire_frame_cube = () => {
     var positions2 = []
 

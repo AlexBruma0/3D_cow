@@ -127,23 +127,9 @@ const colorCube = () =>{
 var position_buffer2
 
 function createBuffers() {
-    position_buffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, position_buffer);
-    gl.bufferData(gl.ARRAY_BUFFER,
-        new Float32Array(positions),
-        gl.STATIC_DRAW);
-    
-    color_buffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
-    gl.bufferData(gl.ARRAY_BUFFER,
-        new Float32Array(colors),
-        gl.STATIC_DRAW);
-
-    position_buffer2 = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, position_buffer2);
-    gl.bufferData(gl.ARRAY_BUFFER,
-        flatten(positions2),
-        gl.STATIC_DRAW);
+    position_buffer = create_buffer(gl,positions)
+    color_buffer = create_buffer(gl, colors)
+    position_buffer2 = create_buffer(gl,positions2)
 }
 
 var cube_angle = 0;
