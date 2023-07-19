@@ -5,6 +5,7 @@ var angleY=0;
 var point_light_angle = 0.0;
 var angularSpeed = 0.0;
 var positions = [];
+var positions2 = []
 var colors = [];
 var normals = []
 var faces = get_faces();
@@ -27,7 +28,7 @@ var point_light = vec3(8,5,5);
 var target = vec3(0, 0, 0);
 var point_light_normal = normalize(subtract(target,point_light))
 const cow_color = vec3(0.9,0.5,0.2)
-const rot = rotate(5, [0.0, 1, 0.0]);
+const rot = rotate(cube_angle, [0.0, 1, 0.0]);
 var v = 0
 
 window.onload = async function setup() {
@@ -96,13 +97,10 @@ function setNormals() {
     return normals
 }
 
-var positions2 = []
-
 const set_positions = () =>{
     [positions,colors] = cow(point_light_normal,normals, cow_color, vertices)
     positions2 = wire_frame_cube()
 }
-
 
 var position_buffer2
 
@@ -113,6 +111,7 @@ function createBuffers() {
 }
 
 var cube_angle = 0;
+var temp = []
 function setUniformVariables() {
     var eye = vec3(0, 0, 30);
     var target = vec3(0, 0, 0);
@@ -129,6 +128,8 @@ function setUniformVariables() {
     var transform_loc2 = gl.getUniformLocation(prog2, "transform2");
     var model2 = rotate(cube_angle, [0.0, 1, 0.0]);
     var transform2 = mult(projection, mult(view, model2));
+    console.log(dot(transform2[0],[8,5,5,1]),5,dot(transform2[2],[8,5,5,1]))
+
     gl.uniformMatrix4fv(transform_loc2, false, flatten(transform2));
 
     gl.useProgram(prog);
@@ -180,8 +181,8 @@ function updateAngle(timestamp) {
 function rotateLight() {
     
     setInterval(() =>{
-        point_light[0] = dot(vec4(point_light,0),rot[0] )
-        point_light[2] = dot(vec4(point_light,0),rot[2] )
+        point_light[0] = dot(vec4(8,5,5,0),rotate(cube_angle,[0,1,0])[0] )
+        point_light[2] = dot(vec4(8,5,5,0),rotate(cube_angle,[0,1,0])[2] )
 
         if(Math.abs(dot(point_light,vec3(8,5,5))) < 0.1 ){
             console.log('hi')
