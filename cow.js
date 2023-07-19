@@ -111,13 +111,6 @@ const colorCube = () =>{
     positions = flatten(positions);
     colors = flatten(colors);
 
-    // positions2 = [
-    //     [-1,0,3],
-    //     [1,1,3],
-    //     [-1,-1,3],
-    //     [0,-1,3]
-    // ]
-
     quad( 1, 0, 3, 2 );
     quad( 2, 3, 7, 6 );
     quad( 3, 0, 4, 7 );
@@ -125,25 +118,23 @@ const colorCube = () =>{
     quad( 4, 5, 6, 7 );
     quad( 5, 4, 0, 1 );
 
-    // flatten
     positions2 = flatten(positions2)
     console.log(positions2)
 }
 function quad(a, b, c, d)
 {
     var vertices = [
-        vec3( -0.5, -0.5,  3.5),
-        vec3( -0.5,  0.5,  3.5),
-        vec3(  0.5,  0.5,  3.5),
-        vec3(  0.5, -0.5,  3.5),
-        vec3( -0.5, -0.5,  2.5),
-        vec3( -0.5,  0.5,  2.5),
-        vec3(  0.5,  0.5,  2.5),
-        vec3(  0.5, -0.5,  2.5)
+        vec3( -0.5, -0.5,  8.5),
+        vec3( -0.5,  0.5,  8.5),
+        vec3(  0.5,  0.5,  8.5),
+        vec3(  0.5, -0.5,  8.5),
+        vec3( -0.5, -0.5,  7.5),
+        vec3( -0.5,  0.5,  7.5),
+        vec3(  0.5,  0.5,  7.5),
+        vec3(  0.5, -0.5,  7.5)
     ];
 
     var indices = [ a, b, c, a, c, d ];
-
     for ( var i = 0; i < indices.length; ++i ) {
         positions2.push( vertices[indices[i]] );
     }
@@ -231,6 +222,15 @@ function rotateLight() {
     setInterval(() =>{
         point_light[0] = dot(vec4(point_light,0),rot[0] )
         point_light[2] = dot(vec4(point_light,0),rot[2] )
+        positions2.forEach((vertex, index) => {
+            if(index % 3 == 0){
+                positions2[index] = dot(vec4(positions2[index],positions2[index+1],positions2[index+2],0),rot[0] )
+            }
+            if(index % 3 == 2){
+                positions2[index] = dot(vec4(positions2[index-2],positions2[index-1],positions2[index],0),rot[2] )
+            }
+        })
+        console.log(positions2)
         point_light_normal = normalize(subtract(target,point_light))
         colors = []
         for ( var i = 0; i < faces.length ; i++ ) {
@@ -253,6 +253,18 @@ function rotateLight() {
         gl.enableVertexAttribArray(col_idx);
         gl.bindVertexArray(null);
 
+        position_buffer2 = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, position_buffer2);
+        gl.bufferData(gl.ARRAY_BUFFER,
+            flatten(positions2),
+            gl.STATIC_DRAW);
+            vao2 = gl.createVertexArray();
+        gl.bindVertexArray(vao2);
+        var pos_idx2 = gl.getAttribLocation(prog, "position");
+        gl.bindBuffer(gl.ARRAY_BUFFER, position_buffer2);
+        gl.vertexAttribPointer(pos_idx2, 3, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(pos_idx2);
+
     },70)
 }
 
@@ -268,8 +280,6 @@ function render(timestamp) {
 
     gl.bindVertexArray(vao);
     gl.drawArrays(gl.TRIANGLES, 0, positions.length/3);
-
-
 
     requestAnimationFrame(render);
 }
