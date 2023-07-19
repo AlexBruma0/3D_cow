@@ -1,5 +1,5 @@
 var gl
-var canvas;
+var canvas
 var angleX= 0 ;
 var angleY=0;
 var point_light_angle = 0;
@@ -28,11 +28,31 @@ var target = vec3(0, 0, 0);
 var point_light_normal = normalize(subtract(target,point_light))
 const cow_color = vec3(0.9,0.5,0.2)
 const rot = rotate(5, [0.0, 1, 0.0]);
+var v = 0
+
+window.onload = async function setup() {
+    canvas = document.getElementById("gl-canvas");
+    gl = WebGLUtils.setupWebGL(canvas);
+    if (!gl) {
+      alert("WebGL isn't available");
+    }
+    initializeContext();
+    setEventListeners(canvas);
+    setNormals()
+    colorCube();
+    createBuffers();
+    await loadShaders();
+    compileShaders();
+    wire_frame_cube()
+    createVertexArrayObjects();
+    angularSpeed = 0.0;
+    rotateLight()
+    requestAnimationFrame(render)
+};
 
 
 function initializeContext() {
-    canvas = document.getElementById("myCanvas");
-    gl = canvas.getContext("webgl2");
+
     const pixelRatio = window.devicePixelRatio || 1;
     canvas.width = pixelRatio * canvas.clientWidth;
     canvas.height = pixelRatio * canvas.clientHeight;
@@ -42,19 +62,7 @@ function initializeContext() {
     gl.enable(gl.DEPTH_TEST);
 }
 
-async function setup() {
-    initializeContext();
-    setEventListeners(canvas);
-    setNormals()
-    colorCube();
-    createBuffers();
-    await loadShaders();
-    compileShaders();
-    createVertexArrayObjects();
-    angularSpeed = 0.0;
-    rotateLight()
-    requestAnimationFrame(render)
-};
+
 function loadShaderFile(url) {
     return fetch(url).then(response => response.text());
 }
@@ -83,14 +91,14 @@ function compileShaders() {
     gl.shaderSource(fs, fs_source);
     gl.compileShader(fs);
 
-    vs2 = gl.createShader(gl.VERTEX_SHADER);
-    gl.shaderSource(vs2, vs_source2); 
-    gl.compileShader(vs2);
-
     prog = gl.createProgram();
     gl.attachShader(prog, vs);
     gl.attachShader(prog, fs);
     gl.linkProgram(prog);
+
+    vs2 = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vs2, vs_source2); 
+    gl.compileShader(vs2);
 
     prog2 = gl.createProgram()
     gl.attachShader(prog2,vs2)
@@ -99,8 +107,6 @@ function compileShaders() {
 
 }
 
-window.onload = setup;
-
 function setNormals() {
     for ( var i = 0; i < faces.length ; i++ ) {
         var u = subtract(vertices[faces[i][0] -1 ] , vertices[faces[i][1] -1 ])
@@ -108,53 +114,15 @@ function setNormals() {
         var c = cross(u,v)
         normals.push(c)
     }
+    return normals
 }
 
 var positions2 = []
 const colorCube = () =>{
-
-    for ( var i = 0; i < faces.length ; i++ ) {
-        var newColor = []
-        var dot_product = dot(point_light_normal, normalize(normals[i]) )
-        cow_color.forEach((c,j) => {newColor[j] = cow_color[j] * dot_product * -1})
-
-        positions.push( vertices[faces[i][0] -1 ]);
-        colors.push([ newColor[0], newColor[1], newColor[2], 1.0 ]);
-        positions.push( vertices[faces[i][1] -1 ]);
-        colors.push([ newColor[0], newColor[1], newColor[2], 1.0 ]);
-        positions.push( vertices[faces[i][2] -1 ]);
-        colors.push([ newColor[0], newColor[1], newColor[2], 1.0 ]);
-    }
-    positions = flatten(positions);
-    colors = flatten(colors);
-
-    quad( 1, 0, 3, 2 );
-    quad( 2, 3, 7, 6 );
-    quad( 3, 0, 4, 7 );
-    quad( 6, 5, 1, 2 );
-    quad( 4, 5, 6, 7 );
-    quad( 5, 4, 0, 1 );
-
-    positions2 = flatten(positions2)
+    [positions,colors] = cow(point_light_normal,normals, cow_color, vertices)
+    positions2 = wire_frame_cube()
 }
-function quad(a, b, c, d)
-{
-    var vertices = [
-        vec3( -0.5, -0.5,  10.5),
-        vec3( -0.5,  0.5,  10.5),
-        vec3(  0.5,  0.5,  10.5),
-        vec3(  0.5, -0.5,  10.5),
-        vec3( -0.5, -0.5,  9.5),
-        vec3( -0.5,  0.5,  9.5),
-        vec3(  0.5,  0.5,  9.5),
-        vec3(  0.5, -0.5,  9.5)
-    ];
 
-    var indices = [ a, b, c, a, c, d ];
-    for ( var i = 0; i < indices.length; ++i ) {
-        positions2.push( vertices[indices[i]] );
-    }
-}
 
 var position_buffer2
 
