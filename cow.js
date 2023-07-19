@@ -2,8 +2,8 @@ var gl
 var canvas
 var angleX= 0 ;
 var angleY=0;
-var point_light_angle = 0;
-var angularSpeed;
+var point_light_angle = 0.0;
+var angularSpeed = 0.0;
 var positions = [];
 var colors = [];
 var normals = []
@@ -39,20 +39,17 @@ window.onload = async function setup() {
     initializeContext();
     setEventListeners(canvas);
     setNormals()
-    colorCube();
+    set_positions();
     createBuffers();
     await loadShaders();
     compileShaders();
     wire_frame_cube()
     createVertexArrayObjects();
-    angularSpeed = 0.0;
     rotateLight()
     requestAnimationFrame(render)
 };
 
-
 function initializeContext() {
-
     const pixelRatio = window.devicePixelRatio || 1;
     canvas.width = pixelRatio * canvas.clientWidth;
     canvas.height = pixelRatio * canvas.clientHeight;
@@ -82,29 +79,11 @@ async function loadShaders() {
 var vs2
 var prog2
 function compileShaders() {
-
-    vs = gl.createShader(gl.VERTEX_SHADER);
-    gl.shaderSource(vs, vs_source);
-    gl.compileShader(vs);
-
-    fs = gl.createShader(gl.FRAGMENT_SHADER);
-    gl.shaderSource(fs, fs_source);
-    gl.compileShader(fs);
-
-    prog = gl.createProgram();
-    gl.attachShader(prog, vs);
-    gl.attachShader(prog, fs);
-    gl.linkProgram(prog);
-
-    vs2 = gl.createShader(gl.VERTEX_SHADER);
-    gl.shaderSource(vs2, vs_source2); 
-    gl.compileShader(vs2);
-
-    prog2 = gl.createProgram()
-    gl.attachShader(prog2,vs2)
-    gl.attachShader(prog2,fs)
-    gl.linkProgram(prog2)
-
+    vs = create_shader(gl,vs_source,gl.VERTEX_SHADER)
+    fs = create_shader(gl, fs_source, gl.FRAGMENT_SHADER)
+    vs2 = create_shader(gl, vs_source2, gl.VERTEX_SHADER)
+    prog = create_program(gl,vs,fs)
+    prog2 = create_program(gl,vs2,fs)
 }
 
 function setNormals() {
@@ -118,7 +97,8 @@ function setNormals() {
 }
 
 var positions2 = []
-const colorCube = () =>{
+
+const set_positions = () =>{
     [positions,colors] = cow(point_light_normal,normals, cow_color, vertices)
     positions2 = wire_frame_cube()
 }

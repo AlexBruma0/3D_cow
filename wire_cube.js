@@ -21,8 +21,8 @@ const cow = (point_light_normal,normals, cow_color,vertices) => {
 }
 
 
-const compile_shaders_wfc = (gl, vs_source2, fs) =>{
-    var vs2 = gl.createShader(gl.VERTEX_SHADER);
+const compile_shaders_wfc = (gl, vs_source2, fs, type) =>{
+    var vs2 = gl.createShader(type);
     gl.shaderSource(vs2, vs_source2); 
     gl.compileShader(vs2);
 
