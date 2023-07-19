@@ -36,7 +36,7 @@ function initializeContext() {
     canvas.width = pixelRatio * canvas.clientWidth;
     canvas.height = pixelRatio * canvas.clientHeight;
     gl.viewport(0, 0, canvas.width, canvas.height);
-    gl.clearColor(0, 0.1, 0.0, 1);
+    gl.clearColor(0.8, 0.8, 0.8, 1);
     gl.lineWidth(1.0);
     gl.enable(gl.DEPTH_TEST);
 }
@@ -93,6 +93,7 @@ function setNormals() {
     }
 }
 
+var positions2
 const colorCube = () =>{
 
     for ( var i = 0; i < faces.length ; i++ ) {
@@ -109,7 +110,17 @@ const colorCube = () =>{
     }
     positions = flatten(positions);
     colors = flatten(colors);
+
+    positions2 = [
+        [-9,-3,-3],
+        [-2,8,1],
+        [5,5,5]
+    ]
+    positions2 = flatten(positions2)
+    console.log(positions2)
 }
+
+var position_buffer2
 
 function createBuffers() {
     position_buffer = gl.createBuffer();
@@ -122,6 +133,12 @@ function createBuffers() {
     gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
     gl.bufferData(gl.ARRAY_BUFFER,
         new Float32Array(colors),
+        gl.STATIC_DRAW);
+
+    position_buffer2 = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, position_buffer2);
+    gl.bufferData(gl.ARRAY_BUFFER,
+        flatten(positions2),
         gl.STATIC_DRAW);
 }
 
@@ -145,7 +162,9 @@ function setUniformVariables() {
     gl.uniformMatrix4fv(transform_loc, false, flatten(transform));
 }
 
+var vao2
 function createVertexArrayObjects() {
+
     vao = gl.createVertexArray();
     gl.bindVertexArray(vao);
     var pos_idx = gl.getAttribLocation(prog, "position");
@@ -158,6 +177,13 @@ function createVertexArrayObjects() {
     gl.vertexAttribPointer(col_idx, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(col_idx);
     gl.bindVertexArray(null);
+
+    vao2 = gl.createVertexArray();
+    gl.bindVertexArray(vao2);
+    var pos_idx2 = gl.getAttribLocation(prog, "position");
+    gl.bindBuffer(gl.ARRAY_BUFFER, position_buffer2);
+    gl.vertexAttribPointer(pos_idx2, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(pos_idx2);
 
 }
 
@@ -208,6 +234,10 @@ function render(timestamp) {
     setUniformVariables();
     gl.bindVertexArray(vao);
     gl.drawArrays(gl.TRIANGLES, 0, positions.length/3);
+
+    gl.bindVertexArray(vao2);
+    gl.drawArrays(gl.TRIANGLES, 0, positions2.length/3);
+
     requestAnimationFrame(render);
 }
 document.addEventListener('contextmenu', event => event.preventDefault());
