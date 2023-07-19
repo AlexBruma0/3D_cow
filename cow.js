@@ -13,6 +13,7 @@ var position_buffer;
 var color_buffer;
 var normal_buffer;
 var vs_source;
+var vs_source2;
 var fs_source;
 var vs;
 var fs;
@@ -61,24 +62,40 @@ function loadShaderFile(url) {
 async function loadShaders() {
     const shaderURLs = [
         './shaders/main.vert',
+        './shaders/cube.vert',
         './shaders/main.frag'
     ];
     const shader_files = await Promise.all(shaderURLs.map(loadShaderFile));
     vs_source = shader_files[0];
-    fs_source = shader_files[1];
+    vs_source2 = shader_files[1];
+    fs_source = shader_files[2];
 }
 
+var vs2
+var prog2
 function compileShaders() {
+
     vs = gl.createShader(gl.VERTEX_SHADER);
     gl.shaderSource(vs, vs_source);
     gl.compileShader(vs);
+
     fs = gl.createShader(gl.FRAGMENT_SHADER);
     gl.shaderSource(fs, fs_source);
     gl.compileShader(fs);
+
+    vs2 = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vs2, vs_source2); 
+    gl.compileShader(vs2);
+
     prog = gl.createProgram();
     gl.attachShader(prog, vs);
     gl.attachShader(prog, fs);
     gl.linkProgram(prog);
+
+    prog2 = gl.createProgram()
+    gl.attachShader(prog2,vs2)
+    gl.attachShader(prog2,fs)
+    gl.linkProgram(prog2)
 
 }
 
@@ -119,7 +136,6 @@ const colorCube = () =>{
     quad( 5, 4, 0, 1 );
 
     positions2 = flatten(positions2)
-    console.log(positions2)
 }
 function quad(a, b, c, d)
 {
@@ -162,12 +178,8 @@ function createBuffers() {
         gl.STATIC_DRAW);
 }
 
+var cube_angle = 0;
 function setUniformVariables() {
-    gl.useProgram(prog);
-    var transform_loc = gl.getUniformLocation(prog, "transform");
-    var model = rotate(angleX, [0.0, 1, 0.0]);
-    var modelY = rotate(angleY, [1.0, 0, 0.0]);
-    var t = translate( translateX, translateY, translateZ )
     var eye = vec3(0, 0, 30);
     var target = vec3(0, 0, 0);
     var up = vec3(0, 1, 0);
@@ -178,8 +190,22 @@ function setUniformVariables() {
     );
     var aspect = canvas.width / canvas.height;
     var projection = perspective(30.0, aspect, 0.1, 10000.0);
+
+    gl.useProgram(prog2);
+    var transform_loc2 = gl.getUniformLocation(prog2, "transform2");
+    var model2 = rotate(cube_angle, [0.0, 1, 0.0]);
+    var transform2 = mult(projection, mult(view, model2));
+    gl.uniformMatrix4fv(transform_loc2, false, flatten(transform2));
+
+    gl.useProgram(prog);
+    var transform_loc = gl.getUniformLocation(prog, "transform");
+    var model = rotate(angleX, [0.0, 1, 0.0]);
+    var modelY = rotate(angleY, [1.0, 0, 0.0]);
+    var t = translate( translateX, translateY, translateZ )
     var transform = mult(projection, mult(view, mult(mult(model,modelY),t)));
     gl.uniformMatrix4fv(transform_loc, false, flatten(transform));
+
+
 }
 
 var vao2
@@ -200,7 +226,7 @@ function createVertexArrayObjects() {
 
     vao2 = gl.createVertexArray();
     gl.bindVertexArray(vao2);
-    var pos_idx2 = gl.getAttribLocation(prog, "position");
+    var pos_idx2 = gl.getAttribLocation(prog2, "position2");
     gl.bindBuffer(gl.ARRAY_BUFFER, position_buffer2);
     gl.vertexAttribPointer(pos_idx2, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(pos_idx2);
@@ -222,15 +248,8 @@ function rotateLight() {
     setInterval(() =>{
         point_light[0] = dot(vec4(point_light,0),rot[0] )
         point_light[2] = dot(vec4(point_light,0),rot[2] )
-        positions2.forEach((vertex, index) => {
-            if(index % 3 == 0){
-                positions2[index] = dot(vec4(positions2[index],positions2[index+1],positions2[index+2],0),rot[0] )
-            }
-            if(index % 3 == 2){
-                positions2[index] = dot(vec4(positions2[index-2],positions2[index-1],positions2[index],0),rot[2] )
-            }
-        })
-        console.log(positions2)
+
+        cube_angle +=10
         point_light_normal = normalize(subtract(target,point_light))
         colors = []
         for ( var i = 0; i < faces.length ; i++ ) {
@@ -270,14 +289,15 @@ function rotateLight() {
 
 function render(timestamp) {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    gl.useProgram(prog);
+
     updateAngle(timestamp)
     setUniformVariables();
 
-
+    gl.useProgram(prog2);
     gl.bindVertexArray(vao2);
     gl.drawArrays(gl.LINES, 0, positions2.length/3);
 
+    gl.useProgram(prog);
     gl.bindVertexArray(vao);
     gl.drawArrays(gl.TRIANGLES, 0, positions.length/3);
 
