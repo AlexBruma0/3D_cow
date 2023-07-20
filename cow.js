@@ -64,41 +64,50 @@ function initializeContext() {
 function loadShaderFile(url) {
     return fetch(url).then(response => response.text());
 }
-
+var cone_vs_source
 async function loadShaders() {
     const shaderURLs = [
         './shaders/main.vert',
         './shaders/cube.vert',
-        './shaders/main.frag'
+        './shaders/main.frag',
+        './shaders/cone.vert'
     ];
     const shader_files = await Promise.all(shaderURLs.map(loadShaderFile));
     vs_source = shader_files[0];
     vs_source2 = shader_files[1];
     fs_source = shader_files[2];
+    cone_vs_source=shader_files[3];
 }
 
 var vs2
 var prog2
+var cone_vs
+var cone_prog
 function compileShaders() {
     vs = create_shader(gl,vs_source,gl.VERTEX_SHADER)
     fs = create_shader(gl, fs_source, gl.FRAGMENT_SHADER)
     vs2 = create_shader(gl, vs_source2, gl.VERTEX_SHADER)
+    cone_vs = create_shader(gl, cone_vs_source, gl.VERTEX_SHADER)
     prog = create_program(gl,vs,fs)
     prog2 = create_program(gl,vs2,fs)
+    cone_prog = create_program(gl,cone_vs,fs)
 }
 
-
+var cone_positions
 const set_positions = () =>{
     [positions,colors] = cow(point_light_normal,normals, cow_color, vertices)
     positions2 = wire_frame_cube()
+    cone_positions = cone()
+    console.log(cone_positions)
 }
 
 var position_buffer2
-
+var cone_position_buffer
 function createBuffers() {
     position_buffer = create_buffer(gl,positions)
     color_buffer = create_buffer(gl, colors)
     position_buffer2 = create_buffer(gl,positions2)
+    cone_position_buffer = create_buffer(gl,cone_positions)
 }
 
 var cube_angle = 0;
@@ -128,13 +137,19 @@ function setUniformVariables() {
     var t = translate( translateX, translateY, translateZ )
     var transform = mult(projection, mult(view, mult(mult(model,modelY),t)));
     gl.uniformMatrix4fv(transform_loc, false, flatten(transform));
-
+    //for cone
+    gl.useProgram(cone_prog);
+    var transform_loc3 = gl.getUniformLocation(cone_prog, "transform2");
+    var model3 = rotate(0, [0.0, 1, 0.0]);
+    var transform3 = mult(projection, mult(view, model3));
+    gl.uniformMatrix4fv(transform_loc3, false, flatten(transform3));
 
 }
 
 var vao2
+var vao3
 function createVertexArrayObjects() {
-
+    //for cow
     vao = gl.createVertexArray();
     gl.bindVertexArray(vao);
     var pos_idx = gl.getAttribLocation(prog, "position");
@@ -147,13 +162,21 @@ function createVertexArrayObjects() {
     gl.vertexAttribPointer(col_idx, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(col_idx);
     gl.bindVertexArray(null);
-
+    //for cube
     vao2 = gl.createVertexArray();
     gl.bindVertexArray(vao2);
     var pos_idx2 = gl.getAttribLocation(prog2, "position2");
     gl.bindBuffer(gl.ARRAY_BUFFER, position_buffer2);
     gl.vertexAttribPointer(pos_idx2, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(pos_idx2);
+
+    //for cone
+    vao3 = gl.createVertexArray();
+    gl.bindVertexArray(vao3);
+    var pos_idx3 = gl.getAttribLocation(cone_prog, "position2");
+    gl.bindBuffer(gl.ARRAY_BUFFER, cone_position_buffer);
+    gl.vertexAttribPointer(pos_idx3, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(pos_idx3);
 
 }
 
@@ -223,13 +246,17 @@ function render(timestamp) {
     updateAngle(timestamp)
     setUniformVariables();
 
-    gl.useProgram(prog2);
-    gl.bindVertexArray(vao2);
-    gl.drawArrays(gl.LINES, 0, positions2.length/3);
+    // gl.useProgram(prog2);
+    // gl.bindVertexArray(vao2);
+    // gl.drawArrays(gl.LINES, 0, positions2.length/3);
 
-    gl.useProgram(prog);
-    gl.bindVertexArray(vao);
-    gl.drawArrays(gl.TRIANGLES, 0, positions.length/3);
+    // gl.useProgram(prog);
+    // gl.bindVertexArray(vao);
+    // gl.drawArrays(gl.TRIANGLES, 0, positions.length/3);
+
+    gl.useProgram(cone_prog);
+    gl.bindVertexArray(vao3);
+    gl.drawArrays(gl.LINES, 0, cone_positions.length/3);
 
     requestAnimationFrame(render);
 }
