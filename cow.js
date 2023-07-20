@@ -140,7 +140,7 @@ function setUniformVariables() {
     //for cone
     gl.useProgram(cone_prog);
     var transform_loc3 = gl.getUniformLocation(cone_prog, "transform2");
-    var model3 = rotate(0, [0.0, 1, 0.0]);
+    var model3 =rotate(cube_angle, [0.0, 1, 0.0]);
     var transform3 = mult(projection, mult(view, model3));
     gl.uniformMatrix4fv(transform_loc3, false, flatten(transform3));
 
@@ -196,12 +196,6 @@ function rotateLight() {
         point_light[0] = dot(vec4(8,5,5,0),rotate(cube_angle,[0,1,0])[0] )
         point_light[2] = dot(vec4(8,5,5,0),rotate(cube_angle,[0,1,0])[2] )
 
-        if(Math.abs(dot(point_light,vec3(8,5,5))) < 0.1 ){
-            console.log('hi')
-            point_light= vec3(8,5,5)
-        }
-
-
         cube_angle +=6
         point_light_normal = normalize(subtract(target,point_light))
         colors = []
@@ -225,18 +219,6 @@ function rotateLight() {
         gl.enableVertexAttribArray(col_idx);
         gl.bindVertexArray(null);
 
-        position_buffer2 = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, position_buffer2);
-        gl.bufferData(gl.ARRAY_BUFFER,
-            flatten(positions2),
-            gl.STATIC_DRAW);
-            vao2 = gl.createVertexArray();
-        gl.bindVertexArray(vao2);
-        var pos_idx2 = gl.getAttribLocation(prog, "position");
-        gl.bindBuffer(gl.ARRAY_BUFFER, position_buffer2);
-        gl.vertexAttribPointer(pos_idx2, 3, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(pos_idx2);
-
     },70)
 }
 
@@ -249,7 +231,7 @@ function render(timestamp) {
     gl.useProgram(prog2);
     gl.bindVertexArray(vao2);
     gl.drawArrays(gl.LINES, 0, positions2.length/3);
-    
+
     gl.useProgram(cone_prog);
     gl.bindVertexArray(vao3);
     gl.drawArrays(gl.LINES, 0, cone_positions.length/3);
