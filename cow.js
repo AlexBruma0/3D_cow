@@ -98,7 +98,6 @@ const set_positions = () =>{
     [positions,colors] = cow(point_light_normal,normals, cow_color, vertices)
     positions2 = wire_frame_cube()
     cone_positions = cone()
-    console.log(cone_positions)
 }
 
 var position_buffer2
@@ -191,28 +190,40 @@ function updateAngle(timestamp) {
     angularSpeed = Math.max(angularSpeed - 100.0*delta, 0.0);
     previousTimestamp = timestamp;
 }
-var theta = 2
+var theta = 10
+var spotlight = vec4(0,6,6,0)
+var spotlight_target = vec4(0,0,0,0)
+var spotlight_normal
 function rotateLight() {
     
     setInterval(() =>{
         point_light[0] = dot(vec4(8,5,5,0),rotate(cube_angle,[0,1,0])[0] )
         point_light[2] = dot(vec4(8,5,5,0),rotate(cube_angle,[0,1,0])[2] )
 
+        spotlight_target[0] = dot(vec4(0,0,-6,0), rotate(cone_angle,[0,1,0])[0] )
+        spotlight_target[2] = dot(vec4(0,0,-6,0), rotate(cone_angle,[0,1,0]) [2] )
+        
         cube_angle +=6
         if(Math.abs(cone_angle) >= 30){
             theta = -theta
         }
         cone_angle +=theta
+        console.log(cone_angle, spotlight_target)
         
         point_light_normal = normalize(subtract(target,point_light))
+
+        spotlight_normal = normalize(subtract(spotlight_target, spotlight))
         colors = []
         for ( var i = 0; i < faces.length ; i++ ) {
             var newColor = []
+            var newColor2 = []
             var dot_product = dot(point_light_normal, normalize(normals[i]) )
-            cow_color.forEach((c,j) => {newColor[j] = cow_color[j] * dot_product * -1})
-            colors.push([ newColor[0], newColor[1], newColor[2], 1.0 ]);
-            colors.push([ newColor[0], newColor[1], newColor[2], 1.0 ]);
-            colors.push([ newColor[0], newColor[1], newColor[2], 1.0 ]);
+            var dot_product_spotlight = dot(spotlight_normal, normalize(vec4(normals[i],1)) )
+            cow_color.forEach((c,j) => {newColor[j] = cow_color[j] * dot_product_spotlight * -1})
+            cow_color.forEach((c,j) => {newColor2[j] = cow_color[j] * dot_product * -1})
+            colors.push([ newColor[0]+newColor2[0], newColor[1]+newColor2[1], newColor[2]+newColor2[2], 1.0 ]);
+            colors.push([ newColor[0]+newColor2[0], newColor[1]+newColor2[1], newColor[2]+newColor2[2], 1.0 ]);
+            colors.push([ newColor[0]+newColor2[0], newColor[1]+newColor2[1], newColor[2]+newColor2[2], 1.0 ]);
         } 
         flatten(colors)
         color_buffer = gl.createBuffer();
