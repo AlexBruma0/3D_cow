@@ -111,6 +111,7 @@ function createBuffers() {
 }
 
 var cube_angle = 0;
+var cone_angle = 0
 var temp = []
 function setUniformVariables() {
     var eye = vec3(0, 0, 30);
@@ -140,7 +141,7 @@ function setUniformVariables() {
     //for cone
     gl.useProgram(cone_prog);
     var transform_loc3 = gl.getUniformLocation(cone_prog, "transform2");
-    var model3 = mult(translate(0,0,6),mult(rotate(cube_angle/4, [0, 1,0]),translate(0,0,-6)));
+    var model3 = mult(translate(0,0,6),mult(rotate(cone_angle, [0, 1,0]),translate(0,0,-6)));
     var transform3 = mult(projection, mult(view, model3));
     gl.uniformMatrix4fv(transform_loc3, false, flatten(transform3));
 
@@ -190,6 +191,7 @@ function updateAngle(timestamp) {
     angularSpeed = Math.max(angularSpeed - 100.0*delta, 0.0);
     previousTimestamp = timestamp;
 }
+var theta = 2
 function rotateLight() {
     
     setInterval(() =>{
@@ -197,6 +199,11 @@ function rotateLight() {
         point_light[2] = dot(vec4(8,5,5,0),rotate(cube_angle,[0,1,0])[2] )
 
         cube_angle +=6
+        if(Math.abs(cone_angle) >= 30){
+            theta = -theta
+        }
+        cone_angle +=theta
+        
         point_light_normal = normalize(subtract(target,point_light))
         colors = []
         for ( var i = 0; i < faces.length ; i++ ) {
