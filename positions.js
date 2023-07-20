@@ -2,6 +2,7 @@ const cow = (point_light_normal,normals, cow_color,vertices) => {
     var positions = []
     var colors = []
     var faces = get_faces();
+    var newNormals = []
     
     for ( var i = 0; i < faces.length ; i++ ) {
         var newColor = []
@@ -10,6 +11,9 @@ const cow = (point_light_normal,normals, cow_color,vertices) => {
 
         positions.push( vertices[faces[i][0] -1 ]);
         colors.push([ newColor[0], newColor[1], newColor[2], 1.0 ]);
+        newNormals.push(normals[i])
+        newNormals.push(normals[i])
+        newNormals.push(normals[i])
         positions.push( vertices[faces[i][1] -1 ]);
         colors.push([ newColor[0], newColor[1], newColor[2], 1.0 ]);
         positions.push( vertices[faces[i][2] -1 ]);
@@ -17,7 +21,8 @@ const cow = (point_light_normal,normals, cow_color,vertices) => {
     }
     positions = flatten(positions);
     colors = flatten(colors);
-    return [positions,colors]
+    newNormals = flatten(newNormals)
+    return [positions,colors,newNormals]
 }
 
 
