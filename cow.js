@@ -246,17 +246,19 @@ function render(timestamp) {
     updateAngle(timestamp)
     setUniformVariables();
 
-    // gl.useProgram(prog2);
-    // gl.bindVertexArray(vao2);
-    // gl.drawArrays(gl.LINES, 0, positions2.length/3);
-
-    // gl.useProgram(prog);
-    // gl.bindVertexArray(vao);
-    // gl.drawArrays(gl.TRIANGLES, 0, positions.length/3);
-
+    gl.useProgram(prog2);
+    gl.bindVertexArray(vao2);
+    gl.drawArrays(gl.LINES, 0, positions2.length/3);
+    
     gl.useProgram(cone_prog);
     gl.bindVertexArray(vao3);
     gl.drawArrays(gl.LINES, 0, cone_positions.length/3);
+
+    gl.useProgram(prog);
+    gl.bindVertexArray(vao);
+    gl.drawArrays(gl.TRIANGLES, 0, positions.length/3);
+
+
 
     requestAnimationFrame(render);
 }
