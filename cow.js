@@ -140,7 +140,7 @@ function setUniformVariables() {
     //for cone
     gl.useProgram(cone_prog);
     var transform_loc3 = gl.getUniformLocation(cone_prog, "transform2");
-    var model3 =rotate(cube_angle, [0.0, 1, 0.0]);
+    var model3 = mult(translate(0,0,6),mult(rotate(cube_angle/4, [0, 1,0]),translate(0,0,-6)));
     var transform3 = mult(projection, mult(view, model3));
     gl.uniformMatrix4fv(transform_loc3, false, flatten(transform3));
 
