@@ -40,7 +40,6 @@ window.onload = async function setup() {
     initializeContext();
     setEventListeners(canvas);
     normals = setNormals(faces,vertices)
-    //normals = flatten(normals)
     console.log(flatten(normals))
     vertex_normals = await setNormals2(faces,vertices)
     console.log(vertex_normals)
@@ -69,24 +68,28 @@ function loadShaderFile(url) {
     return fetch(url).then(response => response.text());
 }
 var cone_vs_source
+var cube_fs_source
 async function loadShaders() {
     const shaderURLs = [
         './shaders/main.vert',
         './shaders/cube.vert',
         './shaders/main.frag',
-        './shaders/cone.vert'
+        './shaders/cone.vert',
+        './shaders/cube.frag'
     ];
     const shader_files = await Promise.all(shaderURLs.map(loadShaderFile));
     vs_source = shader_files[0];
     vs_source2 = shader_files[1];
     fs_source = shader_files[2];
     cone_vs_source=shader_files[3];
+    cube_fs_source = shader_files[4]
 }
 
 var vs2
 var prog2
 var cone_vs
 var cone_prog
+var cube_fs
 function compileShaders() {
     vs = create_shader(gl,vs_source,gl.VERTEX_SHADER)
 
@@ -100,9 +103,27 @@ function compileShaders() {
         // there was an error
         console.error(gl.getShaderInfoLog(fs));
     }
-
     vs2 = create_shader(gl, vs_source2, gl.VERTEX_SHADER)
+
+    if (!gl.getShaderParameter(vs2, gl.COMPILE_STATUS)) {
+        // there was an error
+        console.error(gl.getShaderInfoLog(vs2));
+    }
     cone_vs = create_shader(gl, cone_vs_source, gl.VERTEX_SHADER)
+
+    if (!gl.getShaderParameter(cone_vs, gl.COMPILE_STATUS)) {
+        // there was an error
+        console.error(gl.getShaderInfoLog(cone_vs));
+    }
+    cube_fs = create_shader(gl,cube_fs_source,gl.FRAGMENT_SHADER)
+
+    if (!gl.getShaderParameter(cube_fs, gl.COMPILE_STATUS)) {
+        // there was an error
+        console.error(gl.getShaderInfoLog(cube_fs_source));
+    }
+
+
+
     prog = create_program(gl,vs,fs)
     prog2 = create_program(gl,vs2,fs)
     cone_prog = create_program(gl,cone_vs,fs)
