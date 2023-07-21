@@ -10,7 +10,7 @@ out mediump vec4 outputColor;
 void main() {
     vec3 normal = normalize(vertexNormal);
     vec3 light_color = vec3(1,1,1);
-    vec3 light_source = normalize(vec3(5,0,0));
+    vec3 light_source = normalize(vec3(8,5,5));
     float diffuse_strength = max(0.0, dot(light_source, normal));
     vec3 diffuse = diffuse_strength * light_color;
 
@@ -18,7 +18,7 @@ void main() {
     vec3 view_source = normalize(camera_source);
     vec3 reflect_source = normalize(reflect(-light_source,normal));
     float specular_strength = max(0.0,dot(view_source,reflect_source));
-    specular_strength = pow(specular_strength, 64.0);
+    specular_strength = pow(specular_strength, 32.0);
     vec3 specular = specular_strength * light_color;
 
     vec3 lighting = vec3(0,0,0);

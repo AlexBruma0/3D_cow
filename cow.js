@@ -30,7 +30,7 @@ var point_light_normal = normalize(subtract(target,point_light))
 const cow_color = vec3(0.9,0.5,0.2)
 const rot = rotate(cube_angle, [0.0, 1, 0.0]);
 var v = 0
-
+var vertex_normals
 window.onload = async function setup() {
     canvas = document.getElementById("gl-canvas");
     gl = WebGLUtils.setupWebGL(canvas);
@@ -40,6 +40,10 @@ window.onload = async function setup() {
     initializeContext();
     setEventListeners(canvas);
     normals = setNormals(faces,vertices)
+    //normals = flatten(normals)
+    console.log(flatten(normals))
+    vertex_normals = await setNormals2(faces,vertices)
+    console.log(vertex_normals)
     set_positions();
     createBuffers();
     await loadShaders();
@@ -106,7 +110,8 @@ function compileShaders() {
 
 var cone_positions
 const set_positions = () =>{
-    [positions,colors,normals] = cow(point_light_normal,normals, cow_color, vertices)
+    [positions,colors,normals] = cow(point_light_normal,vertex_normals, cow_color, vertices)
+    console.log(positions, normals)
     positions2 = wire_frame_cube()
     cone_positions = cone()
 }
@@ -115,7 +120,6 @@ var position_buffer2
 var cone_position_buffer
 var normal_buffer
 function createBuffers() {
-    console.log(normals,colors)
     normal_buffer = create_buffer(gl, normals);
     position_buffer = create_buffer(gl,positions)
     color_buffer = create_buffer(gl, colors)
