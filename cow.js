@@ -40,9 +40,7 @@ window.onload = async function setup() {
     initializeContext();
     setEventListeners(canvas);
     normals = setNormals(faces,vertices)
-    console.log(flatten(normals))
     vertex_normals = await setNormals2(faces,vertices)
-    console.log(vertex_normals)
     set_positions();
     createBuffers();
     await loadShaders();
@@ -132,7 +130,6 @@ function compileShaders() {
 var cone_positions
 const set_positions = () =>{
     [positions,colors,normals] = cow(point_light_normal,vertex_normals, cow_color, vertices)
-    console.log(positions, normals)
     positions2 = wire_frame_cube()
     cone_positions = cone()
 }
@@ -175,7 +172,11 @@ function setUniformVariables() {
     var modelY = rotate(angleY, [1.0, 0, 0.0]);
     var t = translate( translateX, translateY, translateZ )
     var transform = mult(projection, mult(view, mult(mult(model,modelY),t)));
-    gl.uniformMatrix4fv(transform_loc, false, flatten(transform));
+    gl.uniformMatrix4fv(transform_loc,false, flatten(transform));
+
+    var lightSource_loc = gl.getUniformLocation(prog, "lightSource");
+    gl.uniform3fv(lightSource_loc, point_light_normal)
+    console.log(lightSource_loc)
     //for cone
     gl.useProgram(cone_prog);
     var transform_loc3 = gl.getUniformLocation(cone_prog, "transform2");
@@ -197,7 +198,6 @@ function createVertexArrayObjects() {
     gl.enableVertexAttribArray(pos_idx);
 
     var norm_idx = gl.getAttribLocation(prog, "normal")
-    console.log(norm_idx)
     gl.bindBuffer(gl.ARRAY_BUFFER, normal_buffer);
     gl.vertexAttribPointer(norm_idx, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(norm_idx);
@@ -254,7 +254,6 @@ function rotateLight() {
             theta = -theta
         }
         cone_angle +=theta
-        console.log(cone_angle, spotlight_target)
         
         point_light_normal = normalize(subtract(target,point_light))
 

@@ -37,8 +37,6 @@ function setNormals2(faces,vertices) {
         var face_normals = faceNormals(faces,vertices)
 
         var normals = []
-        console.log(vertices.length)
-        console.log(faces.length)
         for ( var i = 1; i <= vertices.length ; i++ ) {
             var faces_with_vertex = []
             for ( var j = 0; j < faces.length ; j++ ) {
