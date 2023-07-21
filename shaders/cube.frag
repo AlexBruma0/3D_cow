@@ -5,5 +5,5 @@ in mediump vec4 vertexColor;
 out mediump vec4 outputColor;
 
 void main() {
-    outputColor = vertexColor;
+    outputColor = vec4(1,0,0,1);
 }

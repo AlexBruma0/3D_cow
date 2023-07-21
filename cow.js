@@ -125,8 +125,8 @@ function compileShaders() {
 
 
     prog = create_program(gl,vs,fs)
-    prog2 = create_program(gl,vs2,fs)
-    cone_prog = create_program(gl,cone_vs,fs)
+    prog2 = create_program(gl,vs2,cube_fs)
+    cone_prog = create_program(gl,cone_vs,cube_fs)
 }
 
 var cone_positions
@@ -163,11 +163,11 @@ function setUniformVariables() {
     var aspect = canvas.width / canvas.height;
     var projection = perspective(30.0, aspect, 0.1, 10000.0);
     //for cube 
-    // gl.useProgram(prog2);
-    // var transform_loc2 = gl.getUniformLocation(prog2, "transform2");
-    // var model2 = rotate(cube_angle, [0.0, 1, 0.0]);
-    // var transform2 = mult(projection, mult(view, model2));
-    // gl.uniformMatrix4fv(transform_loc2, false, flatten(transform2));
+    gl.useProgram(prog2);
+    var transform_loc2 = gl.getUniformLocation(prog2, "transform2");
+    var model2 = rotate(cube_angle, [0.0, 1, 0.0]);
+    var transform2 = mult(projection, mult(view, model2));
+    gl.uniformMatrix4fv(transform_loc2, false, flatten(transform2));
     //for cow
     gl.useProgram(prog);
     var transform_loc = gl.getUniformLocation(prog, "transform");
@@ -177,11 +177,11 @@ function setUniformVariables() {
     var transform = mult(projection, mult(view, mult(mult(model,modelY),t)));
     gl.uniformMatrix4fv(transform_loc, false, flatten(transform));
     //for cone
-    // gl.useProgram(cone_prog);
-    // var transform_loc3 = gl.getUniformLocation(cone_prog, "transform2");
-    // var model3 = mult(translate(0,0,6),mult(rotate(cone_angle, [0, 1,0]),translate(0,0,-6)));
-    // var transform3 = mult(projection, mult(view, model3));
-    // gl.uniformMatrix4fv(transform_loc3, false, flatten(transform3));
+    gl.useProgram(cone_prog);
+    var transform_loc3 = gl.getUniformLocation(cone_prog, "transform2");
+    var model3 = mult(translate(0,0,6),mult(rotate(cone_angle, [0, 1,0]),translate(0,0,-6)));
+    var transform3 = mult(projection, mult(view, model3));
+    gl.uniformMatrix4fv(transform_loc3, false, flatten(transform3));
 
 }
 
@@ -209,20 +209,20 @@ function createVertexArrayObjects() {
     gl.enableVertexAttribArray(col_idx);
     gl.bindVertexArray(null);
     // //for cube
-    // vao2 = gl.createVertexArray();
-    // gl.bindVertexArray(vao2);
-    // var pos_idx2 = gl.getAttribLocation(prog2, "position2");
-    // gl.bindBuffer(gl.ARRAY_BUFFER, position_buffer2);
-    // gl.vertexAttribPointer(pos_idx2, 3, gl.FLOAT, false, 0, 0);
-    // gl.enableVertexAttribArray(pos_idx2);
+    vao2 = gl.createVertexArray();
+    gl.bindVertexArray(vao2);
+    var pos_idx2 = gl.getAttribLocation(prog2, "position2");
+    gl.bindBuffer(gl.ARRAY_BUFFER, position_buffer2);
+    gl.vertexAttribPointer(pos_idx2, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(pos_idx2);
 
     // //for cone
-    // vao3 = gl.createVertexArray();
-    // gl.bindVertexArray(vao3);
-    // var pos_idx3 = gl.getAttribLocation(cone_prog, "position2");
-    // gl.bindBuffer(gl.ARRAY_BUFFER, cone_position_buffer);
-    // gl.vertexAttribPointer(pos_idx3, 3, gl.FLOAT, false, 0, 0);
-    // gl.enableVertexAttribArray(pos_idx3);
+    vao3 = gl.createVertexArray();
+    gl.bindVertexArray(vao3);
+    var pos_idx3 = gl.getAttribLocation(cone_prog, "position2");
+    gl.bindBuffer(gl.ARRAY_BUFFER, cone_position_buffer);
+    gl.vertexAttribPointer(pos_idx3, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(pos_idx3);
 
 }
 
@@ -242,48 +242,48 @@ var spotlight_target = vec4(0,0,0,0)
 var spotlight_normal
 function rotateLight() {
     
-    // setInterval(() =>{
-    //     point_light[0] = dot(vec4(8,5,5,0),rotate(cube_angle,[0,1,0])[0] )
-    //     point_light[2] = dot(vec4(8,5,5,0),rotate(cube_angle,[0,1,0])[2] )
+    setInterval(() =>{
+        point_light[0] = dot(vec4(8,5,5,0),rotate(cube_angle,[0,1,0])[0] )
+        point_light[2] = dot(vec4(8,5,5,0),rotate(cube_angle,[0,1,0])[2] )
 
-    //     spotlight_target[0] = dot(vec4(0,0,-6,0), rotate(cone_angle,[0,1,0])[0] )
-    //     spotlight_target[2] = dot(vec4(0,0,-6,0), rotate(cone_angle,[0,1,0]) [2] )
+        spotlight_target[0] = dot(vec4(0,0,-6,0), rotate(cone_angle,[0,1,0])[0] )
+        spotlight_target[2] = dot(vec4(0,0,-6,0), rotate(cone_angle,[0,1,0]) [2] )
         
-    //     cube_angle +=6
-    //     if(Math.abs(cone_angle) >= 30){
-    //         theta = -theta
-    //     }
-    //     cone_angle +=theta
-    //     console.log(cone_angle, spotlight_target)
+        cube_angle +=6
+        if(Math.abs(cone_angle) >= 30){
+            theta = -theta
+        }
+        cone_angle +=theta
+        console.log(cone_angle, spotlight_target)
         
-    //     point_light_normal = normalize(subtract(target,point_light))
+        point_light_normal = normalize(subtract(target,point_light))
 
-    //     spotlight_normal = normalize(subtract(spotlight_target, spotlight))
-    //     colors = []
-    //     for ( var i = 0; i < faces.length ; i++ ) {
-    //         var newColor = []
-    //         var newColor2 = []
-    //         var dot_product = dot(point_light_normal, normalize(normals[i]) )
-    //         var dot_product_spotlight = dot(spotlight_normal, normalize(vec4(normals[i],1)) )
-    //         cow_color.forEach((c,j) => {newColor[j] = cow_color[j] * dot_product_spotlight * -1})
-    //         cow_color.forEach((c,j) => {newColor2[j] = cow_color[j] * dot_product * -1})
-    //         colors.push([ newColor[0]+newColor2[0], newColor[1]+newColor2[1], newColor[2]+newColor2[2], 1.0 ]);
-    //         colors.push([ newColor[0]+newColor2[0], newColor[1]+newColor2[1], newColor[2]+newColor2[2], 1.0 ]);
-    //         colors.push([ newColor[0]+newColor2[0], newColor[1]+newColor2[1], newColor[2]+newColor2[2], 1.0 ]);
-    //     } 
-    //     flatten(colors)
-    //     color_buffer = gl.createBuffer();
-    //     gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
-    //     gl.bufferData(gl.ARRAY_BUFFER,
-    //         flatten(colors),
-    //         gl.STATIC_DRAW);
-    //     var col_idx = gl.getAttribLocation(prog, "color");
-    //     gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
-    //     gl.vertexAttribPointer(col_idx, 4, gl.FLOAT, false, 0, 0);
-    //     gl.enableVertexAttribArray(col_idx);
-    //     gl.bindVertexArray(null);
+        spotlight_normal = normalize(subtract(spotlight_target, spotlight))
+        // colors = []
+        // for ( var i = 0; i < faces.length ; i++ ) {
+        //     var newColor = []
+        //     var newColor2 = []
+        //     var dot_product = dot(point_light_normal, normalize(normals[i]) )
+        //     var dot_product_spotlight = dot(spotlight_normal, normalize(vec4(normals[i],1)) )
+        //     cow_color.forEach((c,j) => {newColor[j] = cow_color[j] * dot_product_spotlight * -1})
+        //     cow_color.forEach((c,j) => {newColor2[j] = cow_color[j] * dot_product * -1})
+        //     colors.push([ newColor[0]+newColor2[0], newColor[1]+newColor2[1], newColor[2]+newColor2[2], 1.0 ]);
+        //     colors.push([ newColor[0]+newColor2[0], newColor[1]+newColor2[1], newColor[2]+newColor2[2], 1.0 ]);
+        //     colors.push([ newColor[0]+newColor2[0], newColor[1]+newColor2[1], newColor[2]+newColor2[2], 1.0 ]);
+        // } 
+        // flatten(colors)
+        // color_buffer = gl.createBuffer();
+        // gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
+        // gl.bufferData(gl.ARRAY_BUFFER,
+        //     flatten(colors),
+        //     gl.STATIC_DRAW);
+        // var col_idx = gl.getAttribLocation(prog, "color");
+        // gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
+        // gl.vertexAttribPointer(col_idx, 4, gl.FLOAT, false, 0, 0);
+        // gl.enableVertexAttribArray(col_idx);
+        // gl.bindVertexArray(null);
 
-    // },70)
+    },70)
 }
 
 function render(timestamp) {
@@ -292,13 +292,13 @@ function render(timestamp) {
     updateAngle(timestamp)
     setUniformVariables();
 
-    // gl.useProgram(prog2);
-    // gl.bindVertexArray(vao2);
-    // gl.drawArrays(gl.LINES, 0, positions2.length/3);
+    gl.useProgram(prog2);
+    gl.bindVertexArray(vao2);
+    gl.drawArrays(gl.LINES, 0, positions2.length/3);
 
-    // gl.useProgram(cone_prog);
-    // gl.bindVertexArray(vao3);
-    // gl.drawArrays(gl.LINES, 0, cone_positions.length/3);
+    gl.useProgram(cone_prog);
+    gl.bindVertexArray(vao3);
+    gl.drawArrays(gl.LINES, 0, cone_positions.length/3);
 
     gl.useProgram(prog);
     gl.bindVertexArray(vao);
