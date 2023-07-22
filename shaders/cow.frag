@@ -9,7 +9,10 @@ in vec3 v_surfaceToView;
 out mediump vec4 outputColor;
 
 uniform vec3 u_lightDirection;
-uniform float u_limit;          
+uniform float u_limit;   
+
+uniform vec3 u_lightColor;
+uniform vec3 u_specularColor;
 
 void main() {
     vec3 normal = normalize(v_normal);
@@ -32,6 +35,6 @@ void main() {
     vec4 u_color = vec4(0.35,0.2,0.1,1);
     
     outputColor = u_color;
-    outputColor.rgb *= light;
-    outputColor.rgb += specular;
+    outputColor.rgb *= light * u_lightColor;
+    outputColor.rgb += specular * u_specularColor;
 }

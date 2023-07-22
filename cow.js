@@ -204,6 +204,13 @@ function setUniformVariables() {
     var limitLocation = gl.getUniformLocation(prog, "u_limit");
     gl.uniform3fv(lightDirectionLocation, lightDirection);
     gl.uniform1f(limitLocation, Math.cos(limit));
+
+    var lightColorLocation = gl.getUniformLocation(prog, "u_lightColor");
+    var specularColorLocation = gl.getUniformLocation(prog, "u_specularColor");
+    // set the light color
+    gl.uniform3fv(lightColorLocation, normalize([0.9, 1, 0])); 
+    // set the specular color
+    gl.uniform3fv(specularColorLocation, normalize([0.9, 1, 0])); 
     // var lightSource_loc = gl.getUniformLocation(prog, "lightSource");
     // gl.uniform3fv(lightSource_loc, point_light_normal)
 
