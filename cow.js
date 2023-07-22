@@ -176,6 +176,10 @@ function setUniformVariables() {
 
     var lightSource_loc = gl.getUniformLocation(prog, "lightSource");
     gl.uniform3fv(lightSource_loc, point_light_normal)
+
+    var limit = 0.35;
+    var limitLocation = gl.getUniformLocation(prog, "u_limit");
+    gl.uniform1f(limitLocation, Math.cos(limit));
     //for cone
     gl.useProgram(cone_prog);
     var transform_loc3 = gl.getUniformLocation(cone_prog, "transform2");

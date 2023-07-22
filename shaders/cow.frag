@@ -9,11 +9,12 @@ in float vertexLimit;
 
 out mediump vec4 outputColor;
 
+uniform float u_limit;
 
 
 void main() {
     vec3 normal = normalize(vertexNormal);
-    vec3 light_color = vec3(3,3,3);
+    vec3 light_color = vec3(3,3,3) * u_limit;
 
     vec3 light_source = normalize(vertexLightSource);
     float diffuse_strength = max(0.0, dot(light_source, normal));
