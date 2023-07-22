@@ -185,7 +185,7 @@ function setUniformVariables() {
     gl.uniformMatrix4fv(worldViewProjectionLocation, false, flatten(worldViewProjectionMatrix));
     gl.uniformMatrix4fv(worldInverseTransposeLocation, false, flatten(worldInverseTransposeMatrix));
     gl.uniformMatrix4fv(worldLocation, false, flatten(worldMatrix));
-    const lightPosition = [0, 1, 5];
+    const lightPosition = [0, 1.2, 5];
     gl.uniform3fv(lightWorldPositionLocation, lightPosition);
     var transform_loc = gl.getUniformLocation(prog, "transform");
     var transform_loc = gl.getUniformLocation(prog, "transform");
@@ -199,7 +199,7 @@ function setUniformVariables() {
     gl.uniform3fv(viewWorldPositionLocation, camera);
     
     var lightDirection = [0, 0, 1];
-    var limit = radians(20);
+    var limit = radians(12);
     var lightDirectionLocation = gl.getUniformLocation(prog, "u_lightDirection");
     var limitLocation = gl.getUniformLocation(prog, "u_limit");
     gl.uniform3fv(lightDirectionLocation, lightDirection);
