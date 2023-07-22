@@ -11,7 +11,7 @@ out vec3 vertexLightSource;
 
 uniform mat4 transform;
 uniform vec3 lightSource; 
-
+uniform mat4 u_world;
 
 
 void main() {
@@ -19,7 +19,10 @@ void main() {
     gl_Position = transform*vec4(position, 1.0f);
     vertexColor = color;
     vertexNormal = normal;
-    vertexLightSource = lightSource;
+
+    vec3 surfaceWorldPosition = (u_world * vec4(position,1)).xyz;
+
+    vertexLightSource = lightSource - surfaceWorldPosition;
   
 
 }

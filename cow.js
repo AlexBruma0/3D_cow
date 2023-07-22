@@ -26,7 +26,7 @@ var translateY =0;
 var translateZ = 0
 var point_light = vec3(8,5,5);
 var target = vec3(0, 0, 0);
-var point_light_normal = normalize(subtract(target,point_light))
+var point_light_normal = point_light
 const cow_color = vec3(0.9,0.5,0.2)
 const rot = rotate(cube_angle, [0.0, 1, 0.0]);
 var v = 0
@@ -180,6 +180,10 @@ function setUniformVariables() {
     var limit = 0.35;
     var limitLocation = gl.getUniformLocation(prog, "u_limit");
     gl.uniform1f(limitLocation, Math.cos(limit));
+
+    var worldMatrix = rotate(angleX, [0.0, 1, 0.0]);
+    var world_loc = gl.getUniformLocation(prog, "u_world");
+    gl.uniformMatrix4fv(world_loc,false,flatten(worldMatrix))
     //for cone
     gl.useProgram(cone_prog);
     var transform_loc3 = gl.getUniformLocation(cone_prog, "transform2");
@@ -258,8 +262,8 @@ function rotateLight() {
         }
         cone_angle +=theta
         
-        point_light_normal = normalize(subtract(target,point_light))
-        point_light_normal = scale(-1,point_light_normal)
+        // point_light_normal = normalize(subtract(target,point_light))
+        // point_light_normal = scale(-1,point_light_normal)
 
         spotlight_normal = normalize(subtract(spotlight_target, spotlight))
         // colors = []
