@@ -24,7 +24,7 @@ var previousTimestamp;
 var translateX =0;
 var translateY =0;
 var translateZ = 0
-var point_light = vec3(8,5,5);
+var point_light = vec3(0, 0, 10);
 var target = vec3(0, 0, 0);
 var point_light_normal = point_light
 const cow_color = vec3(0.9,0.5,0.2)
@@ -149,7 +149,7 @@ var cube_angle = 0;
 var cone_angle = 0
 var temp = []
 function setUniformVariables() {
-    var eye = vec3(0, 0, 30);
+    var eye = vec3(0,0,30);
     var target = vec3(0, 0, 0);
     var up = vec3(0, 1, 0);
     var view = lookAt(
@@ -158,7 +158,7 @@ function setUniformVariables() {
         up
     );
     var aspect = canvas.width / canvas.height;
-    var projection = perspective(30.0, aspect, 0.1, 10000.0);
+    var projection = perspective(30.0, aspect, 0.1, 20000.0);
     //for cube 
     gl.useProgram(prog2);
     var transform_loc2 = gl.getUniformLocation(prog2, "transform2");
@@ -167,23 +167,65 @@ function setUniformVariables() {
     gl.uniformMatrix4fv(transform_loc2, false, flatten(transform2));
     //for cow
     gl.useProgram(prog);
+    var worldViewProjectionLocation = gl.getUniformLocation(prog, "u_worldViewProjection");
+    var worldInverseTransposeLocation = gl.getUniformLocation(prog, "u_worldInverseTranspose");
+    var lightWorldPositionLocation = gl.getUniformLocation(prog, "u_lightWorldPosition");
+    var viewWorldPositionLocation = gl.getUniformLocation(prog, "u_viewWorldPosition");
+    var worldLocation = gl.getUniformLocation(prog, "u_world");
+
+    var projectionMatrix = projection
+    var cameraMatrix = view
+    var viewMatrix = inverse(cameraMatrix);
+    var viewProjectionMatrix = mult(projectionMatrix, viewMatrix);
+    var worldMatrix = rotate(angleX, [0.0, 1, 0.0]);
+    var worldViewProjectionMatrix = mult(viewProjectionMatrix, worldMatrix);
+    var worldInverseMatrix = inverse(worldMatrix);
+    var worldInverseTransposeMatrix = transpose(worldInverseMatrix);
+
+    gl.uniformMatrix4fv(worldViewProjectionLocation, false, flatten(worldViewProjectionMatrix));
+    gl.uniformMatrix4fv(worldInverseTransposeLocation, false, flatten(worldInverseTransposeMatrix));
+    gl.uniformMatrix4fv(worldLocation, false, flatten(worldMatrix));
+    const lightPosition = [0, 1, 5];
+    gl.uniform3fv(lightWorldPositionLocation, lightPosition);
+    var transform_loc = gl.getUniformLocation(prog, "transform");
     var transform_loc = gl.getUniformLocation(prog, "transform");
     var model = rotate(angleX, [0.0, 1, 0.0]);
     var modelY = rotate(angleY, [1.0, 0, 0.0]);
     var t = translate( translateX, translateY, translateZ )
     var transform = mult(projection, mult(view, mult(mult(model,modelY),t)));
     gl.uniformMatrix4fv(transform_loc,false, flatten(transform));
-
-    var lightSource_loc = gl.getUniformLocation(prog, "lightSource");
-    gl.uniform3fv(lightSource_loc, point_light_normal)
-
-    var limit = 0.35;
+    
+    var camera = [0, 0, 30];
+    gl.uniform3fv(viewWorldPositionLocation, camera);
+    
+    var lightDirection = [0, 0, 1];
+    var limit = radians(20);
+    var lightDirectionLocation = gl.getUniformLocation(prog, "u_lightDirection");
     var limitLocation = gl.getUniformLocation(prog, "u_limit");
+    gl.uniform3fv(lightDirectionLocation, lightDirection);
     gl.uniform1f(limitLocation, Math.cos(limit));
+    // var lightSource_loc = gl.getUniformLocation(prog, "lightSource");
+    // gl.uniform3fv(lightSource_loc, point_light_normal)
 
-    var worldMatrix = rotate(angleX, [0.0, 1, 0.0]);
-    var world_loc = gl.getUniformLocation(prog, "u_world");
-    gl.uniformMatrix4fv(world_loc,false,flatten(worldMatrix))
+    // var limit = 0.35;
+    // var limitLocation = gl.getUniformLocation(prog, "u_limit");
+    // gl.uniform1f(limitLocation, Math.cos(limit));
+
+    // var worldMatrix = rotate(angleX, [0.0, 1, 0.0]);
+    // var world_loc = gl.getUniformLocation(prog, "u_world");
+    // gl.uniformMatrix4fv(world_loc,false,flatten(worldMatrix))
+
+    // var viewWorldPositionLocation = gl.getUniformLocation(prog, "u_viewWorldPosition");
+    // gl.uniform3fv(viewWorldPositionLocation, eye);
+
+    // var lightDirection = [0,0, 1];
+    // var limit = 9;
+   
+    // var lightDirectionLocation = gl.getUniformLocation(prog, "u_lightDirection");
+    // var limitLocation = gl.getUniformLocation(prog, "u_limit");
+
+    // gl.uniform3fv(lightDirectionLocation, lightDirection);
+    // gl.uniform1f(limitLocation, Math.cos(limit));
     //for cone
     gl.useProgram(cone_prog);
     var transform_loc3 = gl.getUniformLocation(cone_prog, "transform2");
@@ -199,37 +241,37 @@ function createVertexArrayObjects() {
     //for cow
     vao = gl.createVertexArray();
     gl.bindVertexArray(vao);
-    var pos_idx = gl.getAttribLocation(prog, "position");
+    var pos_idx = gl.getAttribLocation(prog, "a_position");
     gl.bindBuffer(gl.ARRAY_BUFFER, position_buffer);
     gl.vertexAttribPointer(pos_idx, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(pos_idx);
 
-    var norm_idx = gl.getAttribLocation(prog, "normal")
+    var norm_idx = gl.getAttribLocation(prog, "a_normal")
     gl.bindBuffer(gl.ARRAY_BUFFER, normal_buffer);
     gl.vertexAttribPointer(norm_idx, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(norm_idx);
     gl.bindVertexArray(null);
 
-    var col_idx = gl.getAttribLocation(prog, "color");
-    gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
-    gl.vertexAttribPointer(col_idx, 4, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(col_idx);
-    gl.bindVertexArray(null);
+    // var col_idx = gl.getAttribLocation(prog, "color");
+    // gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
+    // gl.vertexAttribPointer(col_idx, 4, gl.FLOAT, false, 0, 0);
+    // gl.enableVertexAttribArray(col_idx);
+    // gl.bindVertexArray(null);
     // //for cube
-    vao2 = gl.createVertexArray();
-    gl.bindVertexArray(vao2);
-    var pos_idx2 = gl.getAttribLocation(prog2, "position2");
-    gl.bindBuffer(gl.ARRAY_BUFFER, position_buffer2);
-    gl.vertexAttribPointer(pos_idx2, 3, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(pos_idx2);
+    // vao2 = gl.createVertexArray();
+    // gl.bindVertexArray(vao2);
+    // var pos_idx2 = gl.getAttribLocation(prog2, "position2");
+    // gl.bindBuffer(gl.ARRAY_BUFFER, position_buffer2);
+    // gl.vertexAttribPointer(pos_idx2, 3, gl.FLOAT, false, 0, 0);
+    // gl.enableVertexAttribArray(pos_idx2);
 
-    // //for cone
-    vao3 = gl.createVertexArray();
-    gl.bindVertexArray(vao3);
-    var pos_idx3 = gl.getAttribLocation(cone_prog, "position2");
-    gl.bindBuffer(gl.ARRAY_BUFFER, cone_position_buffer);
-    gl.vertexAttribPointer(pos_idx3, 3, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(pos_idx3);
+    // // //for cone
+    // vao3 = gl.createVertexArray();
+    // gl.bindVertexArray(vao3);
+    // var pos_idx3 = gl.getAttribLocation(cone_prog, "position2");
+    // gl.bindBuffer(gl.ARRAY_BUFFER, cone_position_buffer);
+    // gl.vertexAttribPointer(pos_idx3, 3, gl.FLOAT, false, 0, 0);
+    // gl.enableVertexAttribArray(pos_idx3);
 
 }
 
@@ -248,10 +290,10 @@ var spotlight = vec4(0,6,6,0)
 var spotlight_target = vec4(0,0,0,0)
 var spotlight_normal
 function rotateLight() {
-    
+    var origin_point_light = vec4(8,5,5,0)
     setInterval(() =>{
-        point_light[0] = dot(vec4(8,5,5,0),rotate(cube_angle,[0,1,0])[0] )
-        point_light[2] = dot(vec4(8,5,5,0),rotate(cube_angle,[0,1,0])[2] )
+        // point_light[0] = dot(origin_point_light,rotate(cube_angle,[0,1,0])[0] )
+        // point_light[2] = dot(origin_point_light,rotate(cube_angle,[0,1,0])[2] )
 
         spotlight_target[0] = dot(vec4(0,0,-6,0), rotate(cone_angle,[0,1,0])[0] )
         spotlight_target[2] = dot(vec4(0,0,-6,0), rotate(cone_angle,[0,1,0]) [2] )
