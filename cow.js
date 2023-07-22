@@ -148,6 +148,7 @@ function createBuffers() {
 var cube_angle = 0;
 var cone_angle = 0
 var temp = []
+var lightPosition = [0, 1.2, 5];
 function setUniformVariables() {
     var eye = vec3(0,0,30);
     var target = vec3(0, 0, 0);
@@ -185,7 +186,7 @@ function setUniformVariables() {
     gl.uniformMatrix4fv(worldViewProjectionLocation, false, flatten(worldViewProjectionMatrix));
     gl.uniformMatrix4fv(worldInverseTransposeLocation, false, flatten(worldInverseTransposeMatrix));
     gl.uniformMatrix4fv(worldLocation, false, flatten(worldMatrix));
-    const lightPosition = [0, 1.2, 5];
+
     gl.uniform3fv(lightWorldPositionLocation, lightPosition);
     var transform_loc = gl.getUniformLocation(prog, "transform");
     var transform_loc = gl.getUniformLocation(prog, "transform");
@@ -296,11 +297,16 @@ var theta = 10
 var spotlight = vec4(0,6,6,0)
 var spotlight_target = vec4(0,0,0,0)
 var spotlight_normal
+var dx = 0.1
 function rotateLight() {
     var origin_point_light = vec4(8,5,5,0)
     setInterval(() =>{
         // point_light[0] = dot(origin_point_light,rotate(cube_angle,[0,1,0])[0] )
         // point_light[2] = dot(origin_point_light,rotate(cube_angle,[0,1,0])[2] )
+        lightPosition[0] += dx
+        if(Math.abs(lightPosition[0])>=4){
+            dx= -dx
+        }
 
         spotlight_target[0] = dot(vec4(0,0,-6,0), rotate(cone_angle,[0,1,0])[0] )
         spotlight_target[2] = dot(vec4(0,0,-6,0), rotate(cone_angle,[0,1,0]) [2] )
