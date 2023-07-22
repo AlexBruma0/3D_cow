@@ -5,12 +5,16 @@ precision mediump float;
 in mediump vec4 vertexColor;
 in vec3 vertexLightSource;
 in vec3 vertexNormal;
+in float vertexLimit;
 
 out mediump vec4 outputColor;
+
+
 
 void main() {
     vec3 normal = normalize(vertexNormal);
     vec3 light_color = vec3(3,3,3);
+
     vec3 light_source = normalize(vertexLightSource);
     float diffuse_strength = max(0.0, dot(light_source, normal));
     vec3 diffuse = diffuse_strength * light_color;

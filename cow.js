@@ -56,7 +56,7 @@ function initializeContext() {
     canvas.width = pixelRatio * canvas.clientWidth;
     canvas.height = pixelRatio * canvas.clientHeight;
     gl.viewport(0, 0, canvas.width, canvas.height);
-    gl.clearColor(0.0, 0.0, 0.0, 1);
+    gl.clearColor(0.5, 0.5, 0.5, 1);
     gl.lineWidth(1.0);
     gl.enable(gl.DEPTH_TEST);
 }
@@ -69,9 +69,9 @@ var cone_vs_source
 var cube_fs_source
 async function loadShaders() {
     const shaderURLs = [
-        './shaders/main.vert',
+        './shaders/cow.vert',
         './shaders/cube.vert',
-        './shaders/main.frag',
+        './shaders/cow.frag',
         './shaders/cone.vert',
         './shaders/cube.frag'
     ];
@@ -176,7 +176,6 @@ function setUniformVariables() {
 
     var lightSource_loc = gl.getUniformLocation(prog, "lightSource");
     gl.uniform3fv(lightSource_loc, point_light_normal)
-    console.log(lightSource_loc)
     //for cone
     gl.useProgram(cone_prog);
     var transform_loc3 = gl.getUniformLocation(cone_prog, "transform2");
@@ -256,6 +255,7 @@ function rotateLight() {
         cone_angle +=theta
         
         point_light_normal = normalize(subtract(target,point_light))
+        point_light_normal = scale(-1,point_light_normal)
 
         spotlight_normal = normalize(subtract(spotlight_target, spotlight))
         // colors = []
