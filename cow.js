@@ -266,7 +266,7 @@ function updateAngle(timestamp) {
     angularSpeed = Math.max(angularSpeed - 100.0*delta, 0.0);
     previousTimestamp = timestamp;
 }
-var theta = 10
+var theta = 1
 var spotlight = vec4(0,6,6,0)
 var spotlight_target = vec4(0,0,0,0)
 var spotlight_normal
@@ -280,18 +280,14 @@ function rotateLight() {
         if(Math.abs(lightPosition[1][0])>=4){
             dx= -dx
         }
-
-        spotlight_target[0] = dot(vec4(0,0,-6,0), rotate(cone_angle/60,[0,1,0])[0] )
-        spotlight_target[2] = dot(vec4(0,0,-6,0), rotate(cone_angle/60 ,[0,1,0]) [2] )
-        
         cube_angle +=6
+    },70)
+    setInterval(() => {
         if(Math.abs(cone_angle) >= 30){
             theta = -theta
         }
         cone_angle +=theta
-        spotlight_normal = normalize(subtract(spotlight_target, spotlight))
-
-    },70)
+    },93)
 }
 
 function render(timestamp) {
