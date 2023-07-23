@@ -35,7 +35,7 @@ void main() {
         if(i == 0){
             light = dot(normal, surfaceToLightDirection[i]);
             if (light > 0.0) {
-                specular = pow(dot(normal, halfVector), 50.0);
+                specular = pow(dot(normal, halfVector), 200.0);
             } 
             light_vector = vec4(light * u_lightColor[0],1);
             specular_vector = vec4(specular * u_specularColor[0],1);  
@@ -44,7 +44,7 @@ void main() {
             if (dotFromDirection[i] >= 0.98) {
                 light = dot(normal, surfaceToLightDirection[i]);
                 if (light > 0.0) {
-                    specular = pow(dot(normal, halfVector), 4.0);
+                    specular = pow(dot(normal, halfVector), 32.0);
                 }
                 light_vector = vec4(light * u_lightColor[1],1);
                 specular_vector = vec4(specular * u_specularColor[1],1);

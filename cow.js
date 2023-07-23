@@ -24,7 +24,7 @@ var previousTimestamp;
 var translateX =0;
 var translateY =0;
 var translateZ = 0
-var point_light = vec3(0, 0, 10);
+var point_light = vec3(8, 5, 5);
 var target = vec3(0, 0, 0);
 var point_light_normal = point_light
 const cow_color = vec3(199,135,200)
@@ -56,7 +56,7 @@ function initializeContext() {
     canvas.width = pixelRatio * canvas.clientWidth;
     canvas.height = pixelRatio * canvas.clientHeight;
     gl.viewport(0, 0, canvas.width, canvas.height);
-    gl.clearColor(0.5, 0.5, 0.5, 1);
+    gl.clearColor(0.0, 0.0, 0.0, 1);
     gl.lineWidth(1.0);
     gl.enable(gl.DEPTH_TEST);
 }
@@ -151,8 +151,9 @@ var temp = []
 var lightPosition = [point_light,[0, 1.2, 5]];
 var lightDirection = [[0,1,1],[0, 0, 1]];
 var limit = [0,Math.cos(radians(12))];
-var light_color = [normalize([1,1,1]), normalize([0.7, 1, 0.3])]
-var specular_color = [normalize([1,1,1]),normalize([0.7, 1, 0.3])]
+//0.0, 1, 0.0
+var light_color = [normalize([1,1,1]), normalize([0.4, 1, 0.2])]
+var specular_color = [normalize([1,1,1]),normalize([0.6, 1, 0.2])]
 var camera = [0, 0, 30];
 var pl_number = 0;
 var sl_number = 1
@@ -288,10 +289,6 @@ function rotateLight() {
             theta = -theta
         }
         cone_angle +=theta
-        
-        // point_light_normal = normalize(subtract(target,point_light))
-        // point_light_normal = scale(-1,point_light_normal)
-
         spotlight_normal = normalize(subtract(spotlight_target, spotlight))
 
     },70)
