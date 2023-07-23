@@ -208,32 +208,10 @@ function setUniformVariables() {
 
     var lightColorLocation = gl.getUniformLocation(prog, "u_lightColor");
     var specularColorLocation = gl.getUniformLocation(prog, "u_specularColor");
-    // set the light color
+
     gl.uniform3fv(lightColorLocation, normalize([0.9, 1, 0])); 
-    // set the specular color
+
     gl.uniform3fv(specularColorLocation, normalize([0.9, 1, 0])); 
-    // var lightSource_loc = gl.getUniformLocation(prog, "lightSource");
-    // gl.uniform3fv(lightSource_loc, point_light_normal)
-
-    // var limit = 0.35;
-    // var limitLocation = gl.getUniformLocation(prog, "u_limit");
-    // gl.uniform1f(limitLocation, Math.cos(limit));
-
-    // var worldMatrix = rotate(angleX, [0.0, 1, 0.0]);
-    // var world_loc = gl.getUniformLocation(prog, "u_world");
-    // gl.uniformMatrix4fv(world_loc,false,flatten(worldMatrix))
-
-    // var viewWorldPositionLocation = gl.getUniformLocation(prog, "u_viewWorldPosition");
-    // gl.uniform3fv(viewWorldPositionLocation, eye);
-
-    // var lightDirection = [0,0, 1];
-    // var limit = 9;
-   
-    // var lightDirectionLocation = gl.getUniformLocation(prog, "u_lightDirection");
-    // var limitLocation = gl.getUniformLocation(prog, "u_limit");
-
-    // gl.uniform3fv(lightDirectionLocation, lightDirection);
-    // gl.uniform1f(limitLocation, Math.cos(limit));
     //for cone
     gl.useProgram(cone_prog);
     var transform_loc3 = gl.getUniformLocation(cone_prog, "transform2");
@@ -259,19 +237,6 @@ function createVertexArrayObjects() {
     gl.vertexAttribPointer(norm_idx, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(norm_idx);
     gl.bindVertexArray(null);
-
-    // var col_idx = gl.getAttribLocation(prog, "color");
-    // gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
-    // gl.vertexAttribPointer(col_idx, 4, gl.FLOAT, false, 0, 0);
-    // gl.enableVertexAttribArray(col_idx);
-    // gl.bindVertexArray(null);
-    // //for cube
-    // vao2 = gl.createVertexArray();
-    // gl.bindVertexArray(vao2);
-    // var pos_idx2 = gl.getAttribLocation(prog2, "position2");
-    // gl.bindBuffer(gl.ARRAY_BUFFER, position_buffer2);
-    // gl.vertexAttribPointer(pos_idx2, 3, gl.FLOAT, false, 0, 0);
-    // gl.enableVertexAttribArray(pos_idx2);
 
     // // //for cone
     // vao3 = gl.createVertexArray();
@@ -321,29 +286,6 @@ function rotateLight() {
         // point_light_normal = scale(-1,point_light_normal)
 
         spotlight_normal = normalize(subtract(spotlight_target, spotlight))
-        // colors = []
-        // for ( var i = 0; i < faces.length ; i++ ) {
-        //     var newColor = []
-        //     var newColor2 = []
-        //     var dot_product = dot(point_light_normal, normalize(normals[i]) )
-        //     var dot_product_spotlight = dot(spotlight_normal, normalize(vec4(normals[i],1)) )
-        //     cow_color.forEach((c,j) => {newColor[j] = cow_color[j] * dot_product_spotlight * -1})
-        //     cow_color.forEach((c,j) => {newColor2[j] = cow_color[j] * dot_product * -1})
-        //     colors.push([ newColor[0]+newColor2[0], newColor[1]+newColor2[1], newColor[2]+newColor2[2], 1.0 ]);
-        //     colors.push([ newColor[0]+newColor2[0], newColor[1]+newColor2[1], newColor[2]+newColor2[2], 1.0 ]);
-        //     colors.push([ newColor[0]+newColor2[0], newColor[1]+newColor2[1], newColor[2]+newColor2[2], 1.0 ]);
-        // } 
-        // flatten(colors)
-        // color_buffer = gl.createBuffer();
-        // gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
-        // gl.bufferData(gl.ARRAY_BUFFER,
-        //     flatten(colors),
-        //     gl.STATIC_DRAW);
-        // var col_idx = gl.getAttribLocation(prog, "color");
-        // gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
-        // gl.vertexAttribPointer(col_idx, 4, gl.FLOAT, false, 0, 0);
-        // gl.enableVertexAttribArray(col_idx);
-        // gl.bindVertexArray(null);
 
     },70)
 }
