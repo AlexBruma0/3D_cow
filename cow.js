@@ -148,7 +148,7 @@ function createBuffers() {
 var cube_angle = 0;
 var cone_angle = 0
 var temp = []
-var lightPosition = [0, 1.2, 5];
+var lightPosition = [point_light,[0, 1.2, 5]];
 var lightDirection = [0, 0, 1];
 var limit = radians(12);
 var light_color = []
@@ -202,7 +202,7 @@ function setUniformVariables() {
     gl.uniformMatrix4fv(worldViewProjectionLocation, false, flatten(worldViewProjectionMatrix));
     gl.uniformMatrix4fv(worldInverseTransposeLocation, false, flatten(worldInverseTransposeMatrix));
     gl.uniformMatrix4fv(worldLocation, false, flatten(worldMatrix));
-    gl.uniform3fv(lightWorldPositionLocation, lightPosition);
+    gl.uniform3fv(lightWorldPositionLocation, lightPosition[1]);
     gl.uniformMatrix4fv(transform_loc,false, flatten(transform));
     gl.uniform3fv(viewWorldPositionLocation, camera);
     gl.uniform3fv(lightDirectionLocation, lightDirection);
@@ -265,7 +265,7 @@ function rotateLight() {
     setInterval(() =>{
         // point_light[0] = dot(origin_point_light,rotate(cube_angle,[0,1,0])[0] )
         // point_light[2] = dot(origin_point_light,rotate(cube_angle,[0,1,0])[2] )
-        lightPosition[0] += dx
+        lightPosition[1][0] += dx
         if(Math.abs(lightPosition[0])>=4){
             dx= -dx
         }
