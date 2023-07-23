@@ -149,7 +149,15 @@ var cube_angle = 0;
 var cone_angle = 0
 var temp = []
 var lightPosition = [0, 1.2, 5];
+var lightDirection = [0, 0, 1];
+var limit = radians(12);
+var light_color = []
+var camera = [0, 0, 30];
+
+
 function setUniformVariables() {
+    var aspect = canvas.width / canvas.height;
+    var projection = perspective(30.0, aspect, 0.1, 20000.0);
     var eye = vec3(0,0,30);
     var target = vec3(0, 0, 0);
     var up = vec3(0, 1, 0);
@@ -158,8 +166,11 @@ function setUniformVariables() {
         target,
         up
     );
-    var aspect = canvas.width / canvas.height;
-    var projection = perspective(30.0, aspect, 0.1, 20000.0);
+    var model = rotate(angleX, [0.0, 1, 0.0]);
+    var modelY = rotate(angleY, [1.0, 0, 0.0]);
+    var t = translate( translateX, translateY, translateZ )
+    var transform = mult(projection, mult(view, mult(mult(model,modelY),t)));
+  
     //for cube 
     gl.useProgram(prog2);
     var transform_loc2 = gl.getUniformLocation(prog2, "transform2");
@@ -173,6 +184,11 @@ function setUniformVariables() {
     var lightWorldPositionLocation = gl.getUniformLocation(prog, "u_lightWorldPosition");
     var viewWorldPositionLocation = gl.getUniformLocation(prog, "u_viewWorldPosition");
     var worldLocation = gl.getUniformLocation(prog, "u_world");
+    var transform_loc = gl.getUniformLocation(prog, "transform");
+    var lightDirectionLocation = gl.getUniformLocation(prog, "u_lightDirection");
+    var limitLocation = gl.getUniformLocation(prog, "u_limit");
+    var lightColorLocation = gl.getUniformLocation(prog, "u_lightColor");
+    var specularColorLocation = gl.getUniformLocation(prog, "u_specularColor");
 
     var projectionMatrix = projection
     var cameraMatrix = view
@@ -186,31 +202,12 @@ function setUniformVariables() {
     gl.uniformMatrix4fv(worldViewProjectionLocation, false, flatten(worldViewProjectionMatrix));
     gl.uniformMatrix4fv(worldInverseTransposeLocation, false, flatten(worldInverseTransposeMatrix));
     gl.uniformMatrix4fv(worldLocation, false, flatten(worldMatrix));
-
     gl.uniform3fv(lightWorldPositionLocation, lightPosition);
-    var transform_loc = gl.getUniformLocation(prog, "transform");
-    var transform_loc = gl.getUniformLocation(prog, "transform");
-    var model = rotate(angleX, [0.0, 1, 0.0]);
-    var modelY = rotate(angleY, [1.0, 0, 0.0]);
-    var t = translate( translateX, translateY, translateZ )
-    var transform = mult(projection, mult(view, mult(mult(model,modelY),t)));
     gl.uniformMatrix4fv(transform_loc,false, flatten(transform));
-    
-    var camera = [0, 0, 30];
     gl.uniform3fv(viewWorldPositionLocation, camera);
-    
-    var lightDirection = [0, 0, 1];
-    var limit = radians(12);
-    var lightDirectionLocation = gl.getUniformLocation(prog, "u_lightDirection");
-    var limitLocation = gl.getUniformLocation(prog, "u_limit");
     gl.uniform3fv(lightDirectionLocation, lightDirection);
     gl.uniform1f(limitLocation, Math.cos(limit));
-
-    var lightColorLocation = gl.getUniformLocation(prog, "u_lightColor");
-    var specularColorLocation = gl.getUniformLocation(prog, "u_specularColor");
-
     gl.uniform3fv(lightColorLocation, normalize([0.9, 1, 0])); 
-
     gl.uniform3fv(specularColorLocation, normalize([0.9, 1, 0])); 
     //for cone
     gl.useProgram(cone_prog);
