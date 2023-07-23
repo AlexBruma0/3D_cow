@@ -29,22 +29,19 @@ void main() {
     for(int i = 0; i < 2; i++){
         surfaceToLightDirection[i] = normalize(v_surfaceToLight[i]);
         dotFromDirection[i] = dot(surfaceToLightDirection[i],u_lightDirection[i]);
-           vec3 halfVector = normalize(surfaceToLightDirection[i] + surfaceToViewDirection);
+        vec3 halfVector = normalize(surfaceToLightDirection[i] + surfaceToViewDirection);
 
-        //0 -> spotlight
-        //1 -> pointl
-        if(u_limit[(i+1) %2] > -100000.0){
+        if(i == 0){
             light = dot(normal, surfaceToLightDirection[i]);
             if (light > 0.0) {
                 specular = pow(dot(normal, halfVector), 50.0);
             }   
         }       
-        else {
+        if (i == 1){
             if (dotFromDirection[i] >= 0.98) {
                 light = dot(normal, surfaceToLightDirection[i]);
                 if (light > 0.0) {
                     specular = pow(dot(normal, halfVector), 50.0);
-            }
             }
         }
         light_vector += vec4(light * u_lightColor[i],1);
@@ -52,4 +49,5 @@ void main() {
     }
     
     outputColor = u_color * light_vector + specular_vector;
+    }
 }
