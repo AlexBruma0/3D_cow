@@ -21,7 +21,8 @@ void main() {
     float limit[2];
     vec4 light_vector;
     vec4 specular_vector;
-    vec4 u_color = vec4(0.35,0.2,0.1,1);
+    vec3 c = normalize(vec3(140,83,45));
+    vec4 u_color = vec4(c,1);
     vec3 surfaceToViewDirection = normalize(v_surfaceToView);
     float light = 0.0;
     float specular = 0.0;
@@ -43,7 +44,7 @@ void main() {
             if (dotFromDirection[i] >= 0.98) {
                 light = dot(normal, surfaceToLightDirection[i]);
                 if (light > 0.0) {
-                    specular = pow(dot(normal, halfVector), 1.0);
+                    specular = pow(dot(normal, halfVector), 4.0);
                 }
                 light_vector = vec4(light * u_lightColor[1],1);
                 specular_vector = vec4(specular * u_specularColor[1],1);
