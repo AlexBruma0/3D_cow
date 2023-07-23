@@ -281,7 +281,7 @@ function rotateLight() {
         }
 
         spotlight_target[0] = dot(vec4(0,0,-6,0), rotate(cone_angle/60,[0,1,0])[0] )
-        spotlight_target[2] = dot(vec4(0,0,-6,0), rotate(cone_angle/60,[0,1,0]) [2] )
+        spotlight_target[2] = dot(vec4(0,0,-6,0), rotate(cone_angle/60 ,[0,1,0]) [2] )
         
         cube_angle +=6
         if(Math.abs(cone_angle) >= 30){
