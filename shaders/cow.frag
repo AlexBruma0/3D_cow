@@ -48,6 +48,7 @@ void main() {
         specular_vector += vec4(specular * u_specularColor[i],1);
     }
     
-    outputColor = u_color * light_vector + specular_vector;
     }
+    outputColor = u_color * light_vector + specular_vector;
+
 }
