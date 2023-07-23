@@ -224,6 +224,13 @@ function setUniformVariables() {
 var vao2
 var vao3
 function createVertexArrayObjects() {
+    // //for cube
+    vao2 = gl.createVertexArray();
+    gl.bindVertexArray(vao2);
+    var pos_idx2 = gl.getAttribLocation(prog2, "position2");
+    gl.bindBuffer(gl.ARRAY_BUFFER, position_buffer2);
+    gl.vertexAttribPointer(pos_idx2, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(pos_idx2);
     //for cow
     vao = gl.createVertexArray();
     gl.bindVertexArray(vao);
@@ -239,12 +246,12 @@ function createVertexArrayObjects() {
     gl.bindVertexArray(null);
 
     // // //for cone
-    // vao3 = gl.createVertexArray();
-    // gl.bindVertexArray(vao3);
-    // var pos_idx3 = gl.getAttribLocation(cone_prog, "position2");
-    // gl.bindBuffer(gl.ARRAY_BUFFER, cone_position_buffer);
-    // gl.vertexAttribPointer(pos_idx3, 3, gl.FLOAT, false, 0, 0);
-    // gl.enableVertexAttribArray(pos_idx3);
+    vao3 = gl.createVertexArray();
+    gl.bindVertexArray(vao3);
+    var pos_idx3 = gl.getAttribLocation(cone_prog, "position2");
+    gl.bindBuffer(gl.ARRAY_BUFFER, cone_position_buffer);
+    gl.vertexAttribPointer(pos_idx3, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(pos_idx3);
 
 }
 
@@ -273,8 +280,8 @@ function rotateLight() {
             dx= -dx
         }
 
-        spotlight_target[0] = dot(vec4(0,0,-6,0), rotate(cone_angle,[0,1,0])[0] )
-        spotlight_target[2] = dot(vec4(0,0,-6,0), rotate(cone_angle,[0,1,0]) [2] )
+        spotlight_target[0] = dot(vec4(0,0,-6,0), rotate(cone_angle/60,[0,1,0])[0] )
+        spotlight_target[2] = dot(vec4(0,0,-6,0), rotate(cone_angle/60,[0,1,0]) [2] )
         
         cube_angle +=6
         if(Math.abs(cone_angle) >= 30){
