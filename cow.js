@@ -149,11 +149,14 @@ var cube_angle = 0;
 var cone_angle = 0
 var temp = []
 var lightPosition = [point_light,[0, 1.2, 5]];
-var lightDirection = [0, 0, 1];
-var limit = radians(12);
-var light_color = []
+var lightDirection = [[0,0,1],[0, 0, 1]];
+var limit = [999999,radians(12)];
+var light_color = [normalize([1,1,1]), normalize([0.9, 1, 0])]
+var specular_color = [normalize([1,1,1]),normalize([0.9, 1, 0])]
 var camera = [0, 0, 30];
-
+var pl_number = 0;
+var sl_number = 1
+var light_number = pl_number
 
 function setUniformVariables() {
     var aspect = canvas.width / canvas.height;
@@ -202,13 +205,13 @@ function setUniformVariables() {
     gl.uniformMatrix4fv(worldViewProjectionLocation, false, flatten(worldViewProjectionMatrix));
     gl.uniformMatrix4fv(worldInverseTransposeLocation, false, flatten(worldInverseTransposeMatrix));
     gl.uniformMatrix4fv(worldLocation, false, flatten(worldMatrix));
-    gl.uniform3fv(lightWorldPositionLocation, lightPosition[1]);
+    gl.uniform3fv(lightWorldPositionLocation, lightPosition[light_number]);
     gl.uniformMatrix4fv(transform_loc,false, flatten(transform));
     gl.uniform3fv(viewWorldPositionLocation, camera);
-    gl.uniform3fv(lightDirectionLocation, lightDirection);
-    gl.uniform1f(limitLocation, Math.cos(limit));
-    gl.uniform3fv(lightColorLocation, normalize([0.9, 1, 0])); 
-    gl.uniform3fv(specularColorLocation, normalize([0.9, 1, 0])); 
+    gl.uniform3fv(lightDirectionLocation, lightDirection[light_number]);
+    gl.uniform1f(limitLocation, Math.cos(limit[light_number]));
+    gl.uniform3fv(lightColorLocation, light_color[light_number]); 
+    gl.uniform3fv(specularColorLocation, specular_color[light_number]); 
     //for cone
     gl.useProgram(cone_prog);
     var transform_loc3 = gl.getUniformLocation(cone_prog, "transform2");
@@ -263,10 +266,10 @@ var dx = 0.1
 function rotateLight() {
     var origin_point_light = vec4(8,5,5,0)
     setInterval(() =>{
-        // point_light[0] = dot(origin_point_light,rotate(cube_angle,[0,1,0])[0] )
-        // point_light[2] = dot(origin_point_light,rotate(cube_angle,[0,1,0])[2] )
+        point_light[0] = dot(origin_point_light,rotate(cube_angle,[0,1,0])[0] )
+        point_light[2] = dot(origin_point_light,rotate(cube_angle,[0,1,0])[2] )
         lightPosition[1][0] += dx
-        if(Math.abs(lightPosition[0])>=4){
+        if(Math.abs(lightPosition[1][0])>=4){
             dx= -dx
         }
 

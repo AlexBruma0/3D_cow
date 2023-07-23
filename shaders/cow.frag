@@ -24,13 +24,22 @@ void main() {
     float specular = 0.0;
 
     float dotFromDirection = dot(surfaceToLightDirection,u_lightDirection);
-                                
-    if (dotFromDirection >= u_limit) {
+
+    if(u_limit > 10000.0){
         light = dot(normal, surfaceToLightDirection);
         if (light > 0.0) {
-        specular = pow(dot(normal, halfVector), 50.0);
+            specular = pow(dot(normal, halfVector), 50.0);
+        }   
+    }       
+    else {
+        if (dotFromDirection >= u_limit) {
+            light = dot(normal, surfaceToLightDirection);
+            if (light > 0.0) {
+                specular = pow(dot(normal, halfVector), 50.0);
+        }
         }
     }
+
 
     vec4 u_color = vec4(0.35,0.2,0.1,1);
     
