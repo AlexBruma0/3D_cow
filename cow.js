@@ -280,6 +280,7 @@ var spotlight_normal
 var dx = 0.1
 var origin_point_light = vec4(8,5,5,0)
 var pointlight_inteval
+var spotlight_is_on = true
 
 function rotateLight() {
     //point light
@@ -363,6 +364,25 @@ function setEventListeners(canvas) {
         if (event.key == 'p' && pointlight_is_on){
             clearInterval(pointlight_inteval)
             pointlight_is_on = false
+            return
+        }
+        if(event.key == 's' && spotlight_is_on){
+            clearInterval(spotlight_interval)
+            spotlight_is_on = false
+            return
+        }
+        if(event.key == 's' && !spotlight_is_on){
+            spotlight_interval = setInterval(() => {
+                lightPosition[1][0] += dx
+                if(Math.abs(lightPosition[1][0])>=4){
+                    dx= -dx
+                }
+                if(Math.abs(cone_angle) >= 30){
+                    theta = -theta
+                }
+                cone_angle +=theta
+            },93)
+            spotlight_is_on = true
             return
         }
 
