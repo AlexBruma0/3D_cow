@@ -317,6 +317,7 @@ function render(timestamp) {
 }
 document.addEventListener('contextmenu', event => event.preventDefault());
 function setEventListeners(canvas) {
+
     canvas.addEventListener('mousemove', function (event) {
         if(event.which == 1){
           translateX = translateX +(event.movementX)/100
@@ -327,16 +328,22 @@ function setEventListeners(canvas) {
           angleY = angleY + (event.movementY)/2
         }
     })
-    document.addEventListener('keydown', (event) => {
 
+    document.addEventListener('keydown', (event) => {
         if(event.key == 'ArrowLeft'){
             angleZ += 1;
         }
         if(event.key == 'ArrowRight'){
             angleZ -= 1;
         }
-        console.log(angleZ)
-    }, false)
+        if(event.key == 'r'){
+            angleX = 0
+            angleY = 0
+            angleZ = 0
+        }
+        console.log(event.key)
+    })
+
     canvas.addEventListener('wheel', function (event) {
       translateZ = translateZ - event.deltaY/10
     })
