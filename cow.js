@@ -158,8 +158,8 @@ var lightPosition = [point_light,[0, 1.2, 5]];
 var lightDirection = [[0,1,1],[0, 0, 1]];
 var limit = [0,Math.cos(radians(12))];
 //0.0, 1, 0.0
-var light_color = [normalize([1,1,1]), normalize([0.4, 1, 0.2])]
-var specular_color = [normalize([1,1,1]),normalize([0.6, 1, 0.2])]
+var light_color = [normalize([1,1,1]), normalize([0.4, 0.8, 0.2])]
+var specular_color = [normalize([1,1,1]),normalize([0.9, 1, 0.9])]
 var camera = [0, 0, 30];
 var pl_number = 0;
 var sl_number = 1
