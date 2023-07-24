@@ -2,6 +2,8 @@ var gl
 var canvas
 var angleX= 0 ;
 var angleY=0;
+var angleZ = 0;
+
 var point_light_angle = 0.0;
 var angularSpeed = 0.0;
 var positions = [];
@@ -172,8 +174,9 @@ function setUniformVariables() {
     );
     var model = rotate(angleX, [0.0, 1, 0.0]);
     var modelY = rotate(angleY, [1.0, 0, 0.0]);
+    var modelZ = rotate(angleZ, [0.0, 0.0, 1.0])
     var t = translate( translateX, translateY, translateZ )
-    var transform = mult(projection, mult(view, mult(mult(model,modelY),t)));
+    var transform = mult(projection, mult(view, mult(mult(model,mult(modelY,modelZ)),t)));
   
     //for cube 
     gl.useProgram(prog2);
@@ -324,8 +327,19 @@ function setEventListeners(canvas) {
           angleY = angleY + (event.movementY)/2
         }
     })
+    document.addEventListener('keydown', (event) => {
+
+        if(event.key == 'ArrowLeft'){
+            angleZ += 1;
+        }
+        if(event.key == 'ArrowRight'){
+            angleZ -= 1;
+        }
+        console.log(angleZ)
+    }, false)
     canvas.addEventListener('wheel', function (event) {
       translateZ = translateZ - event.deltaY/10
     })
 
 }
+
