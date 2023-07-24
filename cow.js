@@ -274,18 +274,20 @@ var spotlight = vec4(0,6,6,0)
 var spotlight_target = vec4(0,0,0,0)
 var spotlight_normal
 var dx = 0.1
+var origin_point_light = vec4(8,5,5,0)
 function rotateLight() {
-    var origin_point_light = vec4(8,5,5,0)
+    //point light
     setInterval(() =>{
         point_light[0] = dot(origin_point_light,rotate(cube_angle,[0,1,0])[0] )
         point_light[2] = dot(origin_point_light,rotate(cube_angle,[0,1,0])[2] )
+        cube_angle +=6
+    },70)
+    //spot light
+    setInterval(() => {
         lightPosition[1][0] += dx
         if(Math.abs(lightPosition[1][0])>=4){
             dx= -dx
         }
-        cube_angle +=6
-    },70)
-    setInterval(() => {
         if(Math.abs(cone_angle) >= 30){
             theta = -theta
         }
@@ -341,6 +343,7 @@ function setEventListeners(canvas) {
             angleY = 0
             angleZ = 0
         }
+        
         console.log(event.key)
     })
 
