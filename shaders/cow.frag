@@ -21,7 +21,7 @@ void main() {
     float limit[2];
     vec4 light_vector;
     vec4 specular_vector;
-    vec3 c = normalize(vec3(29,15,5))*0.8;
+    vec3 c = normalize(vec3(22,12,5))*0.8;
     vec4 u_color = vec4(c,1);
     vec3 surfaceToViewDirection = normalize(v_surfaceToView);
     float light = 0.0;
