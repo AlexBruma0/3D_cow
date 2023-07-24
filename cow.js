@@ -33,6 +33,10 @@ const cow_color = vec3(199,135,200)
 const rot = rotate(cube_angle, [0.0, 1, 0.0]);
 var v = 0
 var vertex_normals
+var pointlight_is_on = true
+var spotlight_interval = true
+
+
 window.onload = async function setup() {
     canvas = document.getElementById("gl-canvas");
     gl = WebGLUtils.setupWebGL(canvas);
@@ -275,15 +279,17 @@ var spotlight_target = vec4(0,0,0,0)
 var spotlight_normal
 var dx = 0.1
 var origin_point_light = vec4(8,5,5,0)
+var pointlight_inteval
+
 function rotateLight() {
     //point light
-    setInterval(() =>{
+    pointlight_inteval = setInterval(() =>{
         point_light[0] = dot(origin_point_light,rotate(cube_angle,[0,1,0])[0] )
         point_light[2] = dot(origin_point_light,rotate(cube_angle,[0,1,0])[2] )
         cube_angle +=6
     },70)
     //spot light
-    setInterval(() => {
+    spotlight_interval = setInterval(() => {
         lightPosition[1][0] += dx
         if(Math.abs(lightPosition[1][0])>=4){
             dx= -dx
@@ -343,8 +349,23 @@ function setEventListeners(canvas) {
             angleY = 0
             angleZ = 0
         }
-        
-        console.log(event.key)
+
+        if (event.key == 'p' && pointlight_is_on == false){
+            pointlight_inteval = setInterval(() =>{
+                point_light[0] = dot(origin_point_light,rotate(cube_angle,[0,1,0])[0] )
+                point_light[2] = dot(origin_point_light,rotate(cube_angle,[0,1,0])[2] )
+                cube_angle +=6
+            },70)
+            pointlight_is_on = true
+            return
+        }
+
+        if (event.key == 'p' && pointlight_is_on){
+            clearInterval(pointlight_inteval)
+            pointlight_is_on = false
+            return
+        }
+
     })
 
     canvas.addEventListener('wheel', function (event) {
