@@ -21,7 +21,7 @@ void main() {
     float limit[2];
     vec4 light_vector;
     vec4 specular_vector;
-    vec3 c = normalize(vec3(140,83,45));
+    vec3 c = normalize(vec3(29,15,5))*0.8;
     vec4 u_color = vec4(c,1);
     vec3 surfaceToViewDirection = normalize(v_surfaceToView);
     float light = 0.0;
@@ -31,13 +31,15 @@ void main() {
         surfaceToLightDirection[i] = normalize(v_surfaceToLight[i]);
         dotFromDirection[i] = dot(surfaceToLightDirection[i],u_lightDirection[i]);
         vec3 halfVector = normalize(surfaceToLightDirection[i] + surfaceToViewDirection);
+        float t = 0.32;
+        vec4 temp = vec4(t,t,t,1);
 
         if(i == 0){
             light = dot(normal, surfaceToLightDirection[i]);
             if (light > 0.0) {
-                specular = pow(dot(normal, halfVector), 200.0);
+                specular = pow(dot(normal, halfVector), 50.0);
             } 
-            light_vector = vec4(light * u_lightColor[0],1);
+            light_vector = vec4(light * u_lightColor[0],1) + temp;
             specular_vector = vec4(specular * u_specularColor[0],1);  
         }       
         if (i == 1){
