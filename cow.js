@@ -273,7 +273,7 @@ function updateAngle(timestamp) {
     angularSpeed = Math.max(angularSpeed - 100.0*delta, 0.0);
     previousTimestamp = timestamp;
 }
-var theta = 1
+var theta = 0.75
 var spotlight = vec4(0,6,6,0)
 var spotlight_target = vec4(0,0,0,0)
 var spotlight_normal
@@ -283,23 +283,23 @@ var pointlight_inteval
 var spotlight_is_on = true
 
 function rotateLight() {
-    // //point light
-    // pointlight_inteval = setInterval(() =>{
-    //     point_light[0] = dot(origin_point_light,rotate(cube_angle,[0,1,0])[0] )
-    //     point_light[2] = dot(origin_point_light,rotate(cube_angle,[0,1,0])[2] )
-    //     cube_angle +=6
-    // },70)
-    // //spot light
-    // spotlight_interval = setInterval(() => {
-    //     lightPosition[1][0] += dx
-    //     if(Math.abs(lightPosition[1][0])>=4){
-    //         dx= -dx
-    //     }
-    //     if(Math.abs(cone_angle) >= 30){
-    //         theta = -theta
-    //     }
-    //     cone_angle +=theta
-    // },93)
+    //point light
+    pointlight_inteval = setInterval(() =>{
+        point_light[0] = dot(origin_point_light,rotate(cube_angle,[0,1,0])[0] )
+        point_light[2] = dot(origin_point_light,rotate(cube_angle,[0,1,0])[2] )
+        cube_angle +=6
+    },70)
+    //spot light
+    spotlight_interval = setInterval(() => {
+        lightPosition[1][0] += dx
+        if(Math.abs(lightPosition[1][0])>=4){
+            dx= -dx
+        }
+        if(Math.abs(cone_angle) >= 30){
+            theta = -theta
+        }
+        cone_angle +=theta
+    },93)
 }
 
 function render(timestamp) {
