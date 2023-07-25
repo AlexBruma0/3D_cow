@@ -29,7 +29,7 @@ void main() {
 
     for(int i = 0; i < 2; i++){
         surfaceToLightDirection[i] = normalize(v_surfaceToLight[i]);
-        dotFromDirection[i] = dot(surfaceToLightDirection[i],u_lightDirection[i]);
+        dotFromDirection[i] = dot(surfaceToLightDirection[i], normalize(u_lightDirection[i]));
         vec3 halfVector = normalize(surfaceToLightDirection[i] + surfaceToViewDirection);
         float t = 0.32;
         vec4 temp = vec4(t,t,t,1);
@@ -43,7 +43,7 @@ void main() {
             specular_vector = vec4(specular * u_specularColor[0],1);  
         }       
         if (i == 1){
-            if (dotFromDirection[i] >= 0.97) {
+            if (abs(dotFromDirection[i])  >= 0.989) {
                 light = 1.0;
                 if (light > 0.0) {
                     specular = pow(dot(normal, halfVector), 8.0);

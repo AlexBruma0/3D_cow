@@ -154,8 +154,8 @@ function createBuffers() {
 var cube_angle = 0;
 var cone_angle = 0
 var temp = []
-var lightPosition = [point_light,[0, 1.2, 5]];
-var lightDirection = [[0,1,1],[0, 0, 1]];
+var lightPosition = [point_light,[0, 6, 6]];
+var lightDirection = [[0,1,1],[0, -5.5, -6]];
 var limit = [0,Math.cos(radians(12))];
 //0.0, 1, 0.0
 var light_color = [normalize([1,1,1]), normalize([0.4, 0.8, 0.2])]
